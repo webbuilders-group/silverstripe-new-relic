@@ -1,0 +1,6 @@
+Configuration
+=================
+Most of the configuration for the module is automatic if you have [New Relic's PHP Agent](https://docs.newrelic.com/docs/agents/php-agent/getting-started/new-relic-php) installed on your server and the extension is loaded. However there are a few configuration options:
+
+* **SS_NR_APPLICATION_NAME:** This constant represents the application name to feed data into New Relic and can be set in either your project's ``_config.php`` or in ``_ss_environment.php``. You probably also want to ensure this is set in web server's configuration layer just in case there are critical issues with SilverStripe and the module does not have or is unable to set the application name. See the [New Relic PHP Agent documentation](https://docs.newrelic.com/docs/agents/php-agent/configuration/php-directory-ini-settings) for more information on how to do this.
+* **SS_NR_FORCE_ENABLE_LOGGING:** By default New Relic will catch most errors in SilverStripe but not all, when the site is in live mode there is a new logger added automatically that looks for any notice, warning or error and ensures it gets relayed to New Relic. If you want to also include this logger in a non-live environment define this constant in either your project's ``_config.php`` or in ``_ss_environment.php``.
