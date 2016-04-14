@@ -7,7 +7,7 @@ Provides improved naming of transactions, error reporting and general tracking f
 
 
 ## Requirements
-* SilverStripe CMS 3.1+
+* SilverStripe Framework 3.1+
 * [New Relic for PHP](https://docs.newrelic.com/docs/agents/php-agent/getting-started/new-relic-php)
 
 

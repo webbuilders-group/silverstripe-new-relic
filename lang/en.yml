@@ -1,0 +1,13 @@
+en:
+    NewRelicPerformanceReport:
+        MENUTITLE: "Site Performance Overview"
+        API_APP_CONFIG_ERROR: "New Relic API Key or Application ID is missing, check configuration"
+        DATA_LOAD_FAIL: "Failed to retrieve data from New Relic"
+        SERVER_RESPONSE_TIME: "Server Response Time"
+        CLIENT_PAGE_LOAD: "Client Load Time"
+        AVERAGE: "Average"
+        SERVER: "Server"
+        CLIENT: "Client"
+        APDEX_SCORE: "Apdex Score"
+        THROUGHPUT: "Throughput"
+        ERROR_RATE: "Error Rate"

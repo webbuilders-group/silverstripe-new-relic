@@ -1,0 +1,214 @@
+.NewRelicPerformanceReport .nr-report-graph {
+    background: #B0BEC7;
+    background-image: linear-gradient(#B0BEC7, #92A5B2);
+    
+    color: #1F1F1F;
+    
+    
+    clear: both;
+    
+    position: relative;
+    
+    width: 100%;
+    height: 400px;
+    
+    margin-bottom: 20px;
+    padding: 10px;
+    
+    border-top: 1px solid #C2CDD4;
+    border-bottom: 1px solid #748D9D;
+    
+    box-sizing: border-box;
+    
+    border-radius: 3px;
+}
+
+.NewRelicPerformanceReport .nr-report-graph.nr-report-two-col {
+    clear: none;
+    
+    float: left;
+    
+    width: 49.5%;
+}
+
+.NewRelicPerformanceReport .nr-report-graph.nr-report-two-col + .nr-report-two-col {
+    margin-left: 1%;
+}
+
+.NewRelicPerformanceReport .nr-report-graph.nr-report-two-col.nr-report-row-end + .nr-report-two-col {
+    clear: both;
+    
+    margin-left: 0;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-header {
+    margin-bottom: 5px;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-header:after {
+    clear: both;
+    
+    display: block;
+    
+    content: ' ';
+    
+    width: 0;
+    height: 0;
+    
+    font-size: 0;
+    
+    line-height: 0;
+    
+    visibility: hidden;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-title {
+    float: left;
+    
+    font-size: 18px;
+    font-weight: bold;
+    
+    line-height: normal;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-averages {
+    float: right;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul, .NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul li {
+    margin: 0;
+    padding: 0;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul li {
+    display: block;
+    
+    float: left;
+    
+    margin-left: 20px;
+    
+    text-align: center;
+    
+    vertical-align: top;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul li span {
+    display: block;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul li .nr-value {
+    font-size: 16px;
+    font-weight: bold;
+    
+    margin-bottom: 4px;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul li .nr-label {
+    font-size: 12px;
+    
+    text-transform: uppercase;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-inner {
+    background: #FFFFFF;
+    
+    position: relative;
+    
+    height: 314px;
+    
+    border: 1px solid #748D9D;
+    
+    padding: 9px;
+    
+    border-radius: 4px;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-canvas-wrap {
+    position: relative;
+    
+    width: 100%;
+    height: 314px;
+}
+
+.NewRelicPerformanceReport .nr-report-graph.no-data .nr-report-canvas-wrap {
+    background: url(./../images/no-data.jpg) no-repeat center center;
+}
+
+.NewRelicPerformanceReport .nr-report-graph.no-data .cms-content-loading-spinner, .NewRelicPerformanceReport .nr-report-graph.no-data .cms-content-loading-overlay, .NewRelicPerformanceReport .nr-report-graph.no-data canvas {
+    display: none;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-canvas {
+    width: 100%;
+    height: 314px;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-canvas-wrap .nr-graph-tooltip {
+    background: rgba(0, 0, 0, 0.8);
+    
+    display: none;
+    
+    position: absolute;
+    left: 0;
+    top: 0;
+    
+    color: #FFFFFF;
+    
+    padding: 5px;
+    
+    border-radius: 4px;
+    
+    white-space: nowrap;
+    
+    z-index: 200;
+    
+    pointer-events: none;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-canvas-wrap .nr-graph-tooltip:before {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    
+    
+    content: " ";
+    
+    width: 0;
+    height: 0;
+    
+    border: 8px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
+    
+    margin-left: -8px;
+    
+    pointer-events: none;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-canvas-wrap .nr-graph-tooltip.arrow-top:before {
+    top: auto;
+    bottom: 100%;
+    
+    border-top-color: transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.8);
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-canvas-wrap .nr-graph-tooltip.arrow-left:before {
+    top: 50%;
+    left: auto;
+    right: 100%;
+    
+    margin: -8px 0 0;
+    
+    border-top-color: transparent;
+    border-right-color: rgba(0, 0, 0, 0.8);
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-canvas-wrap .nr-graph-tooltip.arrow-right:before {
+    top: 50%;
+    left: 100%;
+    
+    margin: -8px 0 0;
+    
+    border-top-color: transparent;
+    border-left-color: rgba(0, 0, 0, 0.8);
+}

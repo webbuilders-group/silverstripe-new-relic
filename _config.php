@@ -1,4 +1,6 @@
 <?php
+define('SS_NR_BASE', basename(dirname(__FILE__)));
+
 //Configure new relic monitoring
 if(extension_loaded('newrelic')) {
     //Bind to the controller class
