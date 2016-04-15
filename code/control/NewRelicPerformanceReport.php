@@ -45,6 +45,7 @@ class NewRelicPerformanceReport extends LeftAndMain {
 
         Requirements::css(SS_NR_BASE.'/css/NewRelicPerformanceReport.css');
         
+        Requirements::add_i18n_javascript(SS_NR_BASE.'/javascript/lang');
         Requirements::javascript(SS_NR_BASE.'/javascript/NewRelicPerformanceReport.js');
         Requirements::javascript(SS_NR_BASE.'/thirdparty/nnnick/chart-js/chart.min.js');
     }

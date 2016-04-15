@@ -34,7 +34,7 @@
         <div class="nr-report-graph nr-report-two-col nr-report-row-end nr-browser-load-time">
             <div class="nr-report-header">
                 <div class="nr-report-title">
-                    <%t NewRelicPerformanceReport.CLIENT_PAGE_LOAD "_Client Load Time" %>
+                    <%t NewRelicPerformanceReport.VISITOR_PAGE_LOAD "_Visitor Load Time" %>
                 </div>
                 
                 <div class="nr-report-averages">
@@ -64,7 +64,8 @@
                 
                 <div class="nr-report-averages">
                     <ul>
-                        <li class="nr-throughput-count"><span class="nr-value">0.00rpm</span><span class="nr-label"><%t NewRelicPerformanceReport.AVERAGE "_Average" %></span></li>
+                        <li class="nr-server"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.SERVER "_Server" %></span></li>
+                        <li class="nr-browser"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.VISITOR "_Visitor" %></span></li>
                     </ul>
                 </div>
             </div>
@@ -84,14 +85,24 @@
         <div class="nr-report-graph nr-report-two-col nr-report-row-end nr-apdex">
             <div class="nr-report-header">
                 <div class="nr-report-title">
-                    <%t NewRelicPerformanceReport.APDEX_SCORE "_Apdex Score" %>
+                    <%t NewRelicPerformanceReport.APDEX_SCORE "_Apdex Score" %><a href="https://docs.newrelic.com/docs/general/apdex" class="nr-report-help" target="_blank"></a>
                 </div>
                 
                 <div class="nr-report-averages">
                     <ul>
                         <li class="nr-server"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.SERVER "_Server" %></span></li>
-                        <li class="nr-browser"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.CLIENT "_Client" %></span></li>
+                        <li class="nr-browser"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.VISITOR "_Visitor" %></span></li>
                     </ul>
+                </div>
+                
+                <div class="nr-graph-tooltip arrow-top nr-report-help-text">
+                    <b><%t NewRelicPerformanceReport.SERVER_APDEX "_Server Apdex" %></b><br />
+                    <%t NewRelicPerformanceReport.SERVER_APDEX_HELP "_Your website's Apdex T-value is set to {{threshold}} seconds. That means requests responding in less than {{threshold}} seconds are satisfying (s), responding between 0.5 seconds and 2.0 seconds are tolerating (t), and responding in more than 2.0 seconds are frustrating (f)." %>
+                    
+                    <hr />
+                    
+                    <b><%t NewRelicPerformanceReport.VISITOR_APDEX "_Visitor Apdex" %></b><br />
+                    <%t NewRelicPerformanceReport.VISITOR_APDEX_HELP "_Your app's Visitor Apdex T-value is set to {{enduser_threshold}} seconds. That means visitor requests responding in less than {{enduser_threshold}} seconds to the end user are satisfying (s), responding between {{threshold}} seconds and 28.0 seconds are tolerating (t), and responding in more than 28.0 seconds are frustrating (f)." %>
                 </div>
             </div>
             

@@ -1,7 +1,13 @@
 (function($) {
     $.entwine('ss.nrintegration', function($) {
+        /**
+         * Report init
+         */
         $('.cms-content.NewRelicPerformanceReport .nr-report-wrapper').entwine({
             onadd: function(e) {
+                //Bootstrap Chart.js
+                initChart();
+                
                 var self=$(this);
                 
                 //Retrieve the data
@@ -22,7 +28,15 @@
              * @param {object} response Response from the server
              */
             _processData: function(response) {
-                initChart();
+                //Verify we have a good response
+                if(response.error) {
+                    statusMessage(ss.i18n._t('NewRelicPerformanceReport.LOAD_ERROR', '_Failed to retrieve data from New Relic'), 'error');
+                    if(console.error) {
+                        console.error(response.error.title);
+                    }
+                    
+                    return;
+                }
                 
                 
                 /**** Process Response ****/
@@ -67,7 +81,7 @@
                 
                 
                 //Render the graph data for the Errors/all
-                $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-error-rate').renderGraph(data['Errors/all'], response.from, response.to);
+                $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-error-rate').renderGraph({HttpDispatcher: data.HttpDispatcher, Errors: data['Errors/all']}, response.from, response.to);
             },
             
             /**
@@ -84,6 +98,9 @@
         });
         
         
+        /**
+         * Base Graph Support
+         */
         $('.cms-content.NewRelicPerformanceReport .nr-report-graph').entwine({
             Chart: null,
             
@@ -91,7 +108,6 @@
              * Destroys the chart when unmatched
              */
             onunmatch: function() {
-                console.log('unmatch');
                 var chart=$(this).getChart();
                 
                 if(chart) {
@@ -145,7 +161,7 @@
              * Hides the tooltip
              */
             hideTooltip: function() {
-                $(this).find('.nr-graph-tooltip').hide();
+                $(this).find('.nr-report-canvas-wrap .nr-graph-tooltip').hide();
             },
             
             /**
@@ -153,7 +169,7 @@
              * @param {object} tooltip Tooltip positioning data
              */
             showTooltip: function(tooltip) {
-                var tooltipDiv=$(this).find('.nr-graph-tooltip');
+                var tooltipDiv=$(this).find('.nr-report-canvas-wrap .nr-graph-tooltip');
                 var leftPos=(tooltip.x-Math.round(tooltipDiv.outerWidth()/2));
                 var topPos=(tooltip.y-14-tooltipDiv.outerHeight());
                 var wrapper=$(this).find('.nr-report-canvas-wrap');
@@ -189,6 +205,39 @@
         });
         
         
+        /**
+         * Help Dialog integration
+         */
+        $('.cms-content.NewRelicPerformanceReport .nr-report-graph .nr-report-help').entwine({
+            /**
+             * Shows the help text when the user moves over the icon
+             */
+            onmouseenter: function() {
+                var self=$(this);
+                var helpText=self.parent().siblings('.nr-report-help-text');
+                if(helpText) {
+                    var pos=self.position();
+                    
+                    helpText.show();
+                    helpText.css('left', ((pos.left+Math.round(self.outerWidth()/2))-Math.round(helpText.outerWidth()/2))+'px').css('top', (pos.top+self.outerHeight()+8)+'px');
+                }
+            },
+            
+            /**
+             * Hides the help text when the user moves off of the icon
+             */
+            onmouseleave: function() {
+                var helpText=$(this).parent().siblings('.nr-report-help-text');
+                if(helpText) {
+                    helpText.hide();
+                }
+            }
+        });
+        
+        
+        /**
+         * Server Response Time Graph
+         */
         $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-server-response-time').entwine({
             /**
              * Renders the graph data
@@ -213,13 +262,13 @@
                 var times=[];
                 var chartData=[
                                {
-                                label: 'Server Response Time',
-                                fillColor: 'rgba(151,187,205,0.2)',
-                                strokeColor: 'rgba(151,187,205,1)',
-                                pointColor: 'rgba(151,187,205,1)',
+                                label: ss.i18n._t('NewRelicPerformanceReport.SERVER_RESPONSE_TIME', '_Server Response Time'),
+                                fillColor: 'rgba(40,112,153,0.2)',
+                                strokeColor: 'rgba(40,112,153,1)',
+                                pointColor: 'rgba(40,112,153,1)',
                                 pointStrokeColor: '#FFFFFF',
                                 pointHighlightFill: '#FFFFFF',
-                                pointHighlightStroke: 'rgba(151,187,205,1)',
+                                pointHighlightStroke: 'rgba(40,112,153,1)',
                                 data: [],
                                 rawData: timeSlices
                             }
@@ -244,7 +293,7 @@
                     bezierCurve: false,
                     pointHitDetectionRadius: 10,
                     scaleLabel: function(valuePayload) {
-                        return self._formatTime(valuePayload.value);
+                        return '  '+self._formatTime(valuePayload.value);
                     },
                     customTooltips: function(tooltip) {
                         if(!tooltip) {
@@ -262,6 +311,8 @@
                 //Store the chart object
                 self.setChart(chart);
                 
+                
+                //Hide the loading
                 self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
             },
             
@@ -276,18 +327,22 @@
                 var toTime=new Date(point.rawData.to);
                 var fromTime=new Date(point.rawData.from);
                 var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
+                var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
                 
-                result+=timeDiff+' minute'+(timeDiff>1 ? 's':'')+' from '+fromTime.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'})+' - '+toTime.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'});
-                result+='<br />'+self._formatTime(point.rawData.values.average_response_time)+' average';
-                result+='<br />'+self._formatTime(point.rawData.values.max_response_time)+' maximum';
-                result+='<br />'+self._formatTime(point.rawData.values.min_response_time)+' minimum';
-                result+='<br />'+point.rawData.values.call_count+' requests';
+                result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
+                result+=ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AVERAGE_VALUE', '_%s average'), self._formatTime(point.rawData.values.average_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MAX_VALUE', '_%s maximum'), self._formatTime(point.rawData.values.max_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MIN_VALUE', '_%s minimum'), self._formatTime(point.rawData.values.min_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AMOUNT_REQUESTS', '_%s requests'), point.rawData.values.call_count);
                 
                 return result;
             }
         });
         
         
+        /**
+         * Browser Load Time Graph
+         */
         $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-browser-load-time').entwine({
             /**
              * Renders the graph data
@@ -312,13 +367,13 @@
                 var times=[];
                 var chartData=[
                                {
-                                label: 'Client Response Time',
-                                fillColor: 'rgba(220,220,220,0.2)',
-                                strokeColor: 'rgba(220,220,220,1)',
-                                pointColor: 'rgba(220,220,220,1)',
-                                pointStrokeColor: "#FFFFFF",
+                                label: 'Visitor Response Time',
+                                fillColor: 'rgba(40,112,153,0.2)',
+                                strokeColor: 'rgba(40,112,153,1)',
+                                pointColor: 'rgba(40,112,153,1)',
+                                pointStrokeColor: '#FFFFFF',
                                 pointHighlightFill: '#FFFFFF',
-                                pointHighlightStroke: 'rgba(220,220,220,1)',
+                                pointHighlightStroke: 'rgba(40,112,153,1)',
                                 data: [],
                                 rawData: timeSlices
                             }
@@ -341,7 +396,510 @@
                     bezierCurve: false,
                     pointHitDetectionRadius: 10,
                     scaleLabel: function(valuePayload) {
-                        return self._formatTime(valuePayload.value);
+                        return '  '+self._formatTime(valuePayload.value);
+                    },
+                    customTooltips: function(tooltip) {
+                        if(!tooltip) {
+                            self.hideTooltip();
+                            return;
+                        }
+                        
+                        self.showTooltip(tooltip);
+                    },
+                    tooltipTemplate: function(point) {
+                        return self.tooltipTemplate(point);
+                    }
+                });
+                
+                
+                //Store the chart object
+                self.setChart(chart);
+                
+                
+                //Hide the loading
+                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+            },
+            
+            /**
+             * Renders the point data into html to be used in the tooltip
+             * @param {object} point Point object
+             * @return {string}
+             */
+            tooltipTemplate: function(point) {
+                var self=$(this);
+                var result='';
+                var toTime=new Date(point.rawData.to);
+                var fromTime=new Date(point.rawData.from);
+                var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
+                var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
+                
+                result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
+                result+=ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AVERAGE_VALUE', '_%s average'), self._formatTime(point.rawData.values.average_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MAX_VALUE', '_%s maximum'), self._formatTime(point.rawData.values.max_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MIN_VALUE', '_%s minimum'), self._formatTime(point.rawData.values.min_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AMOUNT_REQUESTS', '_%s requests'), point.rawData.values.call_count);
+                
+                return result;
+            }
+        });
+        
+        
+        /**
+         * Server and Browser Throughput Graph
+         */
+        $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-throughput').entwine({
+            /**
+             * Renders the graph data
+             * @param {array} data Data for the graph
+             * @param {string} startTime Start time for the data
+             * @param {string} endTime End time for the data
+             */
+            renderGraph: function(timeSlices, startTime, endTime) {
+                var self=$(this);
+                
+                if(!timeSlices) {
+                    self.addClass('no-data');
+                    
+                    return;
+                }
+                
+                
+                self.removeClass('no-data');
+                
+                
+                var context=self.find('.nr-report-canvas').get(0).getContext('2d');
+                var times=[];
+                var chartData=[];
+                var timesLoaded=false;
+                
+                //Add Server Throughput 
+                if(timeSlices.HttpDispatcher!==false) {
+                    var setData=[];
+                    var total=0;
+                    for(var i=0;i<timeSlices.HttpDispatcher.length;i++) {
+                        times.push(self._formatDateTime(timeSlices.HttpDispatcher[i].from));
+                        setData.push(timeSlices.HttpDispatcher[i].values.call_count);
+                        
+                        total+=timeSlices.HttpDispatcher[i].values.call_count;
+                    }
+
+                    chartData.push({
+                        label: ss.i18n._t('NewRelicPerformanceReport.SERVER_REQUESTS', '_Server Requests'),
+                        fillColor: 'rgba(40,112,153,0.2)',
+                        strokeColor: 'rgba(40,112,153,1)',
+                        pointColor: 'rgba(40,112,153,1)',
+                        pointStrokeColor: '#FFFFFF',
+                        pointHighlightFill: '#FFFFFF',
+                        pointHighlightStroke: 'rgba(40,112,153,1)',
+                        data: setData,
+                        rawData: timeSlices.HttpDispatcher
+                    });
+                    
+                    timesLoaded=true;
+                    
+                    
+                    //Calculate Average
+                    var avg=total/timeSlices.HttpDispatcher.length;
+                    self.find('.nr-server .nr-value').text(avg.toFixed(2)+'rpm');
+                }
+                
+                
+                //Add End User time
+                if(timeSlices.EndUser!==false) {
+                    //Build the set data
+                    var setData=[];
+                    var total=0;
+                    for(var i=0;i<timeSlices.EndUser.length;i++) {
+                        if(timesLoaded==false) {
+                            times.push(self._formatDateTime(timeSlices.EndUser[i].from));
+                        }
+                        
+                        setData.push(timeSlices.EndUser[i].values.call_count);
+                        
+                        total+=timeSlices.EndUser[i].values.call_count;
+                    }
+                    
+                    chartData.push({
+                        label: ss.i18n._t('NewRelicPerformanceReport.VISITOR_REQUESTS', '_Visitor Requests'),
+                        fillColor: 'rgba(146,165,178,0.2)',
+                        strokeColor: 'rgba(146,165,178,1)',
+                        pointColor: 'rgba(146,165,178,1)',
+                        pointStrokeColor: "#FFFFFF",
+                        pointHighlightFill: '#FFFFFF',
+                        pointHighlightStroke: 'rgba(146,165,178,1)',
+                        data: setData,
+                        rawData: timeSlices.EndUser
+                    });
+                    
+                    timesLoaded=true;
+                    
+                    
+                    //Calculate Average
+                    var avg=total/timeSlices.EndUser.length;
+                    self.find('.nr-browser .nr-value').text(avg.toFixed(2)+'rpm');
+                }
+                
+                
+                var chart=new Chart(context).NRLine({labels: times, datasets: chartData.reverse()}, {
+                    bezierCurve: false,
+                    pointHitDetectionRadius: 10,
+                    legendTemplate: '<ul class="nr-report-graph-legend"><% for (var i=datasets.length-1; i>=0; i--){%><li style="background-color:<%=datasets[i].strokeColor%>;color:<%=datasets[i].pointStrokeColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+                    scaleLabel: function(valuePayload) {
+                        return '  '+parseFloat(valuePayload.value).toFixed(2);
+                    },
+                    customTooltips: function(tooltip) {
+                        if(!tooltip) {
+                            self.hideTooltip();
+                            return;
+                        }
+                        
+                        self.showTooltip(tooltip);
+                    },
+                    multiTooltipTemplate: function(point) {
+                        return self.tooltipTemplate(point);
+                    }
+                });
+                
+                
+                //Add the legend
+                self.find('.nr-report-canvas-wrap').after(chart.generateLegend());
+                
+                
+                //Store the chart object
+                self.setChart(chart);
+                
+                
+                //Hide the loading
+                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+            },
+            
+            /**
+             * Displays the tooltip
+             * @param {object} tooltip Tooltip positioning data
+             */
+            showTooltip: function(tooltip) {
+                if(tooltip.labels) {
+                    tooltip.labels=tooltip.labels.reverse();
+                    var i=1;
+                    while(i<tooltip.labels.length) {
+                        tooltip.labels[i]=tooltip.labels[i].replace(/<span class="time-span">(.*?)<\/span>/, '');
+                        
+                        i++;
+                    }
+                    
+                    tooltip.text=tooltip.labels.join('<hr/>');
+                }
+                
+                return this._super(tooltip);
+            },
+            
+            /**
+             * Renders the point data into html to be used in the tooltip
+             * @param {object} point Point object
+             * @return {string}
+             */
+            tooltipTemplate: function(point) {
+                var self=$(this);
+                var result='';
+                var toTime=new Date(point.rawData.to);
+                var fromTime=new Date(point.rawData.from);
+                var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
+                var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
+                
+                result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
+                result+='<b>'+point.datasetLabel+'</b>';
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.RPM_VALUE', '_%s rpm'), point.rawData.values.call_count.toFixed(2));
+                
+                return result;
+            },
+        });
+        
+        
+        /**
+         * Server Apdex and Browser Apdex Graph
+         */
+        $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-apdex').entwine({
+            /**
+             * Renders the graph data
+             * @param {array} data Data for the graph
+             * @param {string} startTime Start time for the data
+             * @param {string} endTime End time for the data
+             */
+            renderGraph: function(timeSlices, startTime, endTime) {
+                var self=$(this);
+                
+                if(!timeSlices) {
+                    self.addClass('no-data');
+                    
+                    return;
+                }
+                
+                
+                self.removeClass('no-data');
+                
+                
+                //Update the help text
+                var helpText=self.find('.nr-report-header .nr-report-help-text');
+                if(helpText) {
+                    var helpContent=helpText.html();
+                    
+                    //Replace the server apdex
+                    if(timeSlices.Apdex!==false) {
+                        helpContent=helpContent.replace(/\{\{threshold\}\}/g, timeSlices.Apdex[0].values.threshold);
+                    }else {
+                        helpContent=helpContent.replace(/\{\{threshold\}\}/g, 'N/A');
+                    }
+                    
+                    //Replace the EndUser apdex
+                    if(timeSlices.EndUser!==false) {
+                        helpContent=helpContent.replace(/\{\{enduser_threshold\}\}/g, timeSlices.EndUser[0].values.threshold);
+                    }else {
+                        helpContent=helpContent.replace(/\{\{enduser_threshold\}\}/g, 'N/A');
+                    }
+                    
+                    helpText.html(helpContent);
+                }
+                
+                
+                var context=self.find('.nr-report-canvas').get(0).getContext('2d');
+                var times=[];
+                var chartData=[];
+                var timesLoaded=false;
+                
+                //Add Server Apdex 
+                if(timeSlices.Apdex!==false) {
+                    var setData=[];
+                    var total=0;
+                    for(var i=0;i<timeSlices.Apdex.length;i++) {
+                        times.push(self._formatDateTime(timeSlices.Apdex[i].from));
+                        setData.push(timeSlices.Apdex[i].values.score);
+                        
+                        total+=timeSlices.Apdex[i].values.score;
+                    }
+
+                    chartData.push({
+                        label: ss.i18n._t('NewRelicPerformanceReport.SERVER_APDEX', '_Server Apdex'),
+                        fillColor: 'rgba(40,112,153,0.2)',
+                        strokeColor: 'rgba(40,112,153,1)',
+                        pointColor: 'rgba(40,112,153,1)',
+                        pointStrokeColor: '#FFFFFF',
+                        pointHighlightFill: '#FFFFFF',
+                        pointHighlightStroke: 'rgba(40,112,153,1)',
+                        data: setData,
+                        rawData: timeSlices.Apdex
+                    });
+                    
+                    timesLoaded=true;
+                    
+                    
+                    //Calculate Average
+                    var avg=total/timeSlices.Apdex.length;
+                    self.find('.nr-server .nr-value').text(avg.toFixed(2));
+                }
+                
+                
+                //Add End User time
+                if(timeSlices.EndUser!==false) {
+                    //Build the set data
+                    var setData=[];
+                    var total=0;
+                    for(var i=0;i<timeSlices.EndUser.length;i++) {
+                        if(timesLoaded==false) {
+                            times.push(self._formatDateTime(timeSlices.EndUser[i].from));
+                        }
+                        
+                        setData.push(timeSlices.EndUser[i].values.score);
+                        
+                        total+=timeSlices.EndUser[i].values.score;
+                    }
+                    
+                    chartData.push({
+                        label: ss.i18n._t('NewRelicPerformanceReport.VISITOR_APDEX', '_Visitor Apdex'),
+                        fillColor: 'rgba(146,165,178,0.2)',
+                        strokeColor: 'rgba(146,165,178,1)',
+                        pointColor: 'rgba(146,165,178,1)',
+                        pointStrokeColor: "#FFFFFF",
+                        pointHighlightFill: '#FFFFFF',
+                        pointHighlightStroke: 'rgba(146,165,178,1)',
+                        data: setData,
+                        rawData: timeSlices.EndUser
+                    });
+                    
+                    timesLoaded=true;
+                    
+                    
+                    //Calculate Average
+                    var avg=total/timeSlices.EndUser.length;
+                    self.find('.nr-browser .nr-value').text(avg.toFixed(2));
+                }
+                
+                
+                var chart=new Chart(context).NRLine({labels: times, datasets: chartData.reverse()}, {
+                    bezierCurve: false,
+                    pointHitDetectionRadius: 10,
+                    legendTemplate: '<ul class="nr-report-graph-legend"><% for (var i=datasets.length-1; i>=0; i--){%><li style="background-color:<%=datasets[i].strokeColor%>;color:<%=datasets[i].pointStrokeColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+                    scaleLabel: function(valuePayload) {
+                        return '  '+parseFloat(valuePayload.value).toFixed(2);
+                    },
+                    customTooltips: function(tooltip) {
+                        if(!tooltip) {
+                            self.hideTooltip();
+                            return;
+                        }
+                        
+                        self.showTooltip(tooltip);
+                    },
+                    multiTooltipTemplate: function(point) {
+                        return self.tooltipTemplate(point);
+                    }
+                });
+                
+                
+                //Add the legend
+                self.find('.nr-report-canvas-wrap').after(chart.generateLegend());
+                
+                
+                //Store the chart object
+                self.setChart(chart);
+                
+                
+                //Hide the loading
+                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+            },
+            
+            /**
+             * Displays the tooltip
+             * @param {object} tooltip Tooltip positioning data
+             */
+            showTooltip: function(tooltip) {
+                if(tooltip.labels) {
+                    tooltip.labels=tooltip.labels.reverse();
+                    var i=1;
+                    while(i<tooltip.labels.length) {
+                        tooltip.labels[i]=tooltip.labels[i].replace(/<span class="time-span">(.*?)<\/span>/, '');
+                        
+                        i++;
+                    }
+                    
+                    tooltip.text=tooltip.labels.join('<hr/>');
+                }
+                
+                return this._super(tooltip);
+            },
+            
+            /**
+             * Renders the point data into html to be used in the tooltip
+             * @param {object} point Point object
+             * @return {string}
+             */
+            tooltipTemplate: function(point) {
+                var self=$(this);
+                var result='';
+                var toTime=new Date(point.rawData.to);
+                var fromTime=new Date(point.rawData.from);
+                var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
+                var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
+                
+                result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
+                result+='<b>'+point.datasetLabel+'</b>';
+                result+='<br />'+point.rawData.values.score.toFixed(2)+' '+self._calculateRating(point.rawData.values.score);
+                result+='<br />Sample Size: '+point.rawData.values.count;
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.SATISFIED_VALUE', '_Satisfied: %s'), point.rawData.values.s+' ('+Math.round((point.rawData.values.s/point.rawData.values.count)*100)+'%)');
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.TOLERATING_VALUE', '_Tolerating: %s'),point.rawData.values.t+' ('+Math.round((point.rawData.values.t/point.rawData.values.count)*100)+'%)');
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.FRUSTRATED_VALUE', '_Frustrated: %s'), point.rawData.values.f+' ('+Math.round((point.rawData.values.f/point.rawData.values.count)*100)+'%)');
+                
+                return result;
+            },
+            
+            /**
+             * Gets the friendly apdex rating (i.e Excellent, Good, Fair, etc)
+             * @param {float} score Apdex Score
+             * @return {string}
+             */
+            _calculateRating: function(score) {
+                if(score>=0.94) {
+                    return ss.i18n._t('NewRelicPerformanceReport.APDEX_EXCELLENT', '_Excellent');
+                }else if(score>=0.85) {
+                    return ss.i18n._t('NewRelicPerformanceReport.APDEX_GOOD', '_Good');
+                }else if(score>=0.7) {
+                    return ss.i18n._t('NewRelicPerformanceReport.APDEX_FAIR', '_Fair');
+                }else if(score>=0.5) {
+                    return ss.i18n._t('NewRelicPerformanceReport.APDEX_POOR', '_Poor');
+                }else {
+                    return ss.i18n._t('NewRelicPerformanceReport.APDEX_UNACCEPTABLE', '_Unacceptable');
+                }
+            }
+        });
+        
+        
+        /**
+         * Error Rate Graph
+         */
+        $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-error-rate').entwine({
+            /**
+             * Renders the graph data
+             * @param {array} data Data for the graph
+             * @param {string} startTime Start time for the data
+             * @param {string} endTime End time for the data
+             */
+            renderGraph: function(timeSlices, startTime, endTime) {
+                var self=$(this);
+                
+                if(!timeSlices.Errors) {
+                    self.addClass('no-data');
+                    
+                    return;
+                }
+                
+
+                self.removeClass('no-data');
+                
+                var context=self.find('.nr-report-canvas').get(0).getContext('2d');
+                var total=0;
+                var reqTotal=0;
+                var times=[];
+                var chartData=[{
+                                label: ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE', '_Error Rate'),
+                                fillColor: 'rgba(40,112,153,0.2)',
+                                strokeColor: 'rgba(40,112,153,1)',
+                                pointColor: 'rgba(40,112,153,1)',
+                                pointStrokeColor: '#FFFFFF',
+                                pointHighlightFill: '#FFFFFF',
+                                pointHighlightStroke: 'rgba(40,112,153,1)',
+                                data: [],
+                                rawData: []
+                           }];
+                
+                for(var i=0;i<timeSlices.Errors.length;i++) {
+                    times.push(self._formatDateTime(timeSlices.Errors[i].from));
+                    
+                    //Store the call count
+                    timeSlices.Errors[i].values.call_count=timeSlices.HttpDispatcher[i].values.call_count;
+                    
+                    
+                    total+=timeSlices.Errors[i].values.error_count;
+                    reqTotal+=timeSlices.Errors[i].values.call_count;
+                    
+                    
+                    chartData[0].data.push(((timeSlices.Errors[i].values.error_count/timeSlices.Errors[i].values.call_count)*100).toFixed(3));
+                }
+                
+                
+                //Calculate Percentage
+                var percentage=Math.round((total/reqTotal)*100);
+                self.find('.nr-rate-percent .nr-value').text(percentage+'%');
+                
+                
+                //Store the raw data
+                chartData[0].rawData=timeSlices.Errors;
+                
+                
+                //Init Graph
+                var chart=new Chart(context).NRLine({labels: times, datasets: chartData}, {
+                    bezierCurve: false,
+                    pointHitDetectionRadius: 10,
+                    scaleLabel: function(valuePayload) {
+                        return '  '+parseFloat(valuePayload.value).toFixed(3)+'%';
                     },
                     customTooltips: function(tooltip) {
                         if(!tooltip) {
@@ -359,6 +917,8 @@
                 //Store the chart object
                 self.setChart(chart);
                 
+                
+                //Hide the loading
                 self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
             },
             
@@ -373,12 +933,12 @@
                 var toTime=new Date(point.rawData.to);
                 var fromTime=new Date(point.rawData.from);
                 var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
+                var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
                 
-                result+=timeDiff+' minute'+(timeDiff>1 ? 's':'')+' from '+fromTime.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'})+' - '+toTime.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'});
-                result+='<br />'+self._formatTime(point.rawData.values.average_response_time)+' average';
-                result+='<br />'+self._formatTime(point.rawData.values.max_response_time)+' maximum';
-                result+='<br />'+self._formatTime(point.rawData.values.min_response_time)+' minimum';
-                result+='<br />'+point.rawData.values.call_count+' requests';
+                result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE_VALUE', '_Error Rate: %s'), ((point.rawData.values.error_count/point.rawData.values.call_count)*100).toFixed(3));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.ERRORS_PER_MIN', '_Errors Per Minute: %s'), point.rawData.values.errors_per_minute);
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.REQUESTS_PER_MIN', '_Requests Per Minute: %s'), point.rawData.values.call_count);
                 
                 return result;
             }
@@ -489,6 +1049,23 @@
                 this.scale.addXLabel(label);
                 //Then re-render the chart.
                 this.update();
+            }
+        });
+        
+        Chart.defaults.NRLine.legendTemplate='<ul class="nr-report-graph-legend"><% for (var i=0; i<datasets.length; i++){%><li style="background-color:<%=datasets[i].strokeColor%>;color:<%=datasets[i].pointStrokeColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>';
+        
+        
+        Chart.MultiTooltip = Chart.MultiTooltip.extend({
+            initialize: function() {
+                this.font = Chart.helpers.fontString(this.fontSize,this.fontStyle,this.fontFamily);
+
+                this.titleFont = Chart.helpers.fontString(this.titleFontSize,this.titleFontStyle,this.titleFontFamily);
+
+                this.titleHeight = 0;
+                this.width = 0;
+                this.height = 0;
+                
+                this.ctx.font = this.titleFont;
             }
         });
     }
