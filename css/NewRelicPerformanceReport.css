@@ -114,25 +114,37 @@
     text-transform: uppercase;
 }
 
+.NewRelicPerformanceReport .nr-report-graph .nr-report-ratio {
+    position: relative;
+    
+    width: 100%;
+    
+    padding-bottom: 53%;
+}
 .NewRelicPerformanceReport .nr-report-graph .nr-report-inner {
     background: #FFFFFF;
     
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
     
-    height: 334px;
+    width: 100%;
+    height: 100%;
     
     border: 1px solid #748D9D;
     
     padding: 9px;
     
     border-radius: 4px;
+    
+    box-sizing: border-box;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-canvas-wrap {
     position: relative;
     
     width: 100%;
-    height: 314px;
+    height: 92.5%;
 }
 
 .NewRelicPerformanceReport .nr-report-graph.no-data .nr-report-canvas-wrap {
@@ -145,7 +157,7 @@
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-canvas {
     width: 100%;
-    height: 314px;
+    height: 100%;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-graph-tooltip {
@@ -274,4 +286,18 @@
     width: 210px;
     
     white-space: normal;
+}
+
+@media only screen and (max-width: 1200px) {
+    .NewRelicPerformanceReport .nr-report-graph.nr-report-two-col {
+        clear: both;
+        
+        float: none;
+        
+        width: auto;
+    }
+    
+    .NewRelicPerformanceReport .nr-report-graph.nr-report-two-col + .nr-report-two-col {
+        margin-left: 0;
+    }
 }
