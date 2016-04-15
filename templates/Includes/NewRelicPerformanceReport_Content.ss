@@ -68,8 +68,8 @@
                 
                 <div class="nr-report-averages">
                     <ul>
-                        <li class="nr-server"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.SERVER "_Server" %></span></li>
-                        <li class="nr-browser"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.VISITOR "_Visitor" %></span></li>
+                        <li class="nr-server"><span class="nr-value"><%t NewRelicPerformanceReport.NO_RPM "_0.00rpm" %></span><span class="nr-label"><%t NewRelicPerformanceReport.SERVER "_Server" %></span></li>
+                        <li class="nr-browser"><span class="nr-value"><%t NewRelicPerformanceReport.NO_RPM "_0.00rpm" %></span><span class="nr-label"><%t NewRelicPerformanceReport.VISITOR "_Visitor" %></span></li>
                     </ul>
                 </div>
             </div>

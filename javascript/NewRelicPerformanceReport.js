@@ -4,6 +4,11 @@
          * Report init
          */
         $('.cms-content.NewRelicPerformanceReport .nr-report-wrapper').entwine({
+            RefreshTimer: null,
+            
+            /**
+             * Bootstraps when the wrapper is added to the dom
+             */
             onadd: function(e) {
                 //Bootstrap Chart.js
                 initChart();
@@ -21,6 +26,19 @@
                         self._onRetrieveError(res, status, xhr);
                     }
                 });
+            },
+            
+            /**
+             * Destructor
+             */
+            onunmatch: function() {
+                //Stop and clear the timer
+                var timer=$(this).getRefreshTimer();
+                if(timer) {
+                    clearTimeout(timer);
+                    
+                    $(this).setRefreshTimer(null);
+                }
             },
             
             /**
@@ -82,6 +100,47 @@
                 
                 //Render the graph data for the Errors/all
                 $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-error-rate').renderGraph({HttpDispatcher: data.HttpDispatcher, Errors: data['Errors/all']}, response.from, response.to);
+                
+                
+                //Start refresh timer
+                var self=$(this);
+                var refreshRate=parseInt(self.attr('data-report-refresh-rate'));
+                $(this).setRefreshTimer(setTimeout(function() {
+                                            self.refreshData();
+                                        }, (refreshRate>60 ? refreshRate+30:300)*1000));
+            },
+            
+            /**
+             * Refreshes the data
+             */
+            refreshData: function() {
+                //Stop and clear the timer
+                var timer=$(this).getRefreshTimer();
+                if(timer) {
+                    clearTimeout(timer);
+                    
+                    $(this).setRefreshTimer(null);
+                }
+                
+                
+                var self=$(this);
+                
+                
+                //Reset all graphs
+                $('.cms-content.NewRelicPerformanceReport .nr-report-graph').reset();
+                
+                
+                //Retrieve the data
+                $.ajax({
+                    url: self.attr('data-report-data-feed'),
+                    dataType: 'json',
+                    success: function(response) {
+                        self._processData(response);
+                    },
+                    error: function(res, status, xhr) {
+                        self._onRetrieveError(res, status, xhr);
+                    }
+                });
             },
             
             /**
@@ -201,6 +260,29 @@
                             .css('left', (tooltip.x-14-tooltipDiv.outerWidth())+'px')
                             .css('top', (tooltip.y-Math.round(tooltipDiv.outerHeight()/2))+'px');
                 }
+            },
+            
+            /**
+             * Resets the report
+             */
+            reset: function() {
+                var self=$(this);
+                var chart=self.getChart();
+                if(chart) {
+                    chart.destroy();
+                }
+                
+                
+                //Remove the no-data class
+                self.removeClass('no-data');
+                
+                
+                //Remove the legend
+                self.find('.nr-report-graph-legend').remove();
+                
+                
+                //Display the loading spinner
+                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').show();
             }
         });
         
@@ -336,6 +418,15 @@
                 result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AMOUNT_REQUESTS', '_%s requests'), point.rawData.values.call_count);
                 
                 return result;
+            },
+            
+            /**
+             * Resets the report
+             */
+            reset: function() {
+                $(this).find('.nr-server .nr-value').text(ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
+                
+                this._super();
             }
         });
         
@@ -440,6 +531,15 @@
                 result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AMOUNT_REQUESTS', '_%s requests'), point.rawData.values.call_count);
                 
                 return result;
+            },
+            
+            /**
+             * Resets the report
+             */
+            reset: function() {
+                $(this).find('.nr-browser .nr-value').text(ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
+                
+                this._super();
             }
         });
         
@@ -500,7 +600,7 @@
                     
                     //Calculate Average
                     var avg=total/timeSlices.HttpDispatcher.length;
-                    self.find('.nr-server .nr-value').text(avg.toFixed(2)+'rpm');
+                    self.find('.nr-server .nr-value').text(ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.RPM_SHORT_VALUE', '_%srpm'), avg.toFixed(2)));
                 }
                 
                 
@@ -536,7 +636,7 @@
                     
                     //Calculate Average
                     var avg=total/timeSlices.EndUser.length;
-                    self.find('.nr-browser .nr-value').text(avg.toFixed(2)+'rpm');
+                    self.find('.nr-browser .nr-value').text(ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.RPM_SHORT_VALUE', '_%srpm'), avg.toFixed(2)));
                 }
                 
                 
@@ -612,6 +712,18 @@
                 
                 return result;
             },
+            
+            /**
+             * Resets the report
+             */
+            reset: function() {
+                var self=$(this);
+                
+                self.find('.nr-server .nr-value').text(ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.RPM_SHORT_VALUE', '_%srpm'), '0.00'));
+                self.find('.nr-browser .nr-value').text(ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.RPM_SHORT_VALUE', '_%srpm'), '0.00'));
+                
+                this._super();
+            }
         });
         
         
@@ -647,14 +759,14 @@
                     if(timeSlices.Apdex!==false) {
                         helpContent=helpContent.replace(/\{\{threshold\}\}/g, timeSlices.Apdex[0].values.threshold);
                     }else {
-                        helpContent=helpContent.replace(/\{\{threshold\}\}/g, 'N/A');
+                        helpContent=helpContent.replace(/\{\{threshold\}\}/g, ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
                     }
                     
                     //Replace the EndUser apdex
                     if(timeSlices.EndUser!==false) {
                         helpContent=helpContent.replace(/\{\{enduser_threshold\}\}/g, timeSlices.EndUser[0].values.threshold);
                     }else {
-                        helpContent=helpContent.replace(/\{\{enduser_threshold\}\}/g, 'N/A');
+                        helpContent=helpContent.replace(/\{\{enduser_threshold\}\}/g, ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
                     }
                     
                     helpText.html(helpContent);
@@ -804,11 +916,23 @@
                 result+='<b>'+point.datasetLabel+'</b>';
                 result+='<br />'+point.rawData.values.score.toFixed(2)+' '+self._calculateRating(point.rawData.values.score);
                 result+='<br />Sample Size: '+point.rawData.values.count;
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.SATISFIED_VALUE', '_Satisfied: %s'), point.rawData.values.s+' ('+Math.round((point.rawData.values.s/point.rawData.values.count)*100)+'%)');
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.TOLERATING_VALUE', '_Tolerating: %s'),point.rawData.values.t+' ('+Math.round((point.rawData.values.t/point.rawData.values.count)*100)+'%)');
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.FRUSTRATED_VALUE', '_Frustrated: %s'), point.rawData.values.f+' ('+Math.round((point.rawData.values.f/point.rawData.values.count)*100)+'%)');
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.SATISFIED_VALUE', '_Satisfied: %s'), point.rawData.values.s+' ('+(point.rawData.values.count>0 ? Math.round((point.rawData.values.s/point.rawData.values.count)*100):0)+'%)');
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.TOLERATING_VALUE', '_Tolerating: %s'),point.rawData.values.t+' ('+(point.rawData.values.count>0 ? Math.round((point.rawData.values.t/point.rawData.values.count)*100):0)+'%)');
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.FRUSTRATED_VALUE', '_Frustrated: %s'), point.rawData.values.f+' ('+(point.rawData.values.count>0 ? Math.round((point.rawData.values.f/point.rawData.values.count)*100):0)+'%)');
                 
                 return result;
+            },
+            
+            /**
+             * Resets the report
+             */
+            reset: function() {
+                var self=$(this);
+                
+                self.find('.nr-server .nr-value').text(ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
+                self.find('.nr-browser .nr-value').text(ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
+                
+                this._super();
             },
             
             /**
@@ -941,6 +1065,17 @@
                 result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.REQUESTS_PER_MIN', '_Requests Per Minute: %s'), point.rawData.values.call_count);
                 
                 return result;
+            },
+            
+            /**
+             * Resets the report
+             */
+            reset: function() {
+                var self=$(this);
+                
+                self.find('.nr-rate-percent .nr-value').text('0.00%');
+                
+                this._super();
             }
         });
     });
