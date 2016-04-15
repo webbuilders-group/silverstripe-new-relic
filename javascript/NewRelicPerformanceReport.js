@@ -107,7 +107,7 @@
                 var refreshRate=parseInt(self.attr('data-report-refresh-rate'));
                 $(this).setRefreshTimer(setTimeout(function() {
                                             self.refreshData();
-                                        }, (refreshRate>60 ? refreshRate+30:300)*1000));
+                                        }, (refreshRate>120 ? refreshRate+30:300)*1000));
             },
             
             /**
