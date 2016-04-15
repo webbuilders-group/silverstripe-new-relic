@@ -1,7 +1,4 @@
 <?php
-//Make sure we have the SS_Report class
-if(!class_exists('SS_Report')) return;
-
 class NewRelicPerformanceReport extends LeftAndMain {
     private static $url_segment='site-performance-overview';
     private static $menu_priority=-1;
