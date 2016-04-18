@@ -83,6 +83,8 @@
     height: 22px;
     
     vertical-align: top;
+    
+    cursor: help;
 }
 
 .NewRelicPerformanceReport .nr-report-graph.nr-report-graph-crit .nr-report-title .nr-report-alert-icon {
@@ -296,6 +298,8 @@
     height: 22px;
     
     vertical-align: top;
+    
+    cursor: help;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-help-text {
