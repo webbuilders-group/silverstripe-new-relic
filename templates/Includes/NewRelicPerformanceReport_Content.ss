@@ -156,5 +156,8 @@
                 </div>
             </div>
         </div>
+        
+        
+        <p class="nr-data-provider"><%t NewRelicPerformanceReport.DATA_PROVIDED_BY "_Data provided by:" %> <a href="http://newrelic.com" target="_blank"><img src="$NRBase/images/new-relic-full.png" alt="New Relic"/></a></p>
     </div>
 </div>

@@ -288,6 +288,16 @@
     white-space: normal;
 }
 
+.NewRelicPerformanceReport .nr-data-provider {
+    clear: both;
+    
+    line-height: 20px;
+}
+
+.NewRelicPerformanceReport .nr-data-provider img {
+    vertical-align: bottom;
+}
+
 @media only screen and (max-width: 1200px) {
     .NewRelicPerformanceReport .nr-report-graph.nr-report-two-col {
         clear: both;

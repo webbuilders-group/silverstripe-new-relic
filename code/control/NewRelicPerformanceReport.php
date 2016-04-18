@@ -100,5 +100,13 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	public function getRefreshRate() {
 	    return $this->config()->refresh_rate;
 	}
+	
+	/**
+	 * Gets the base folder for the new relic module
+	 * @return {string}
+	 */
+	public function getNRBase() {
+	    return SS_NR_BASE;
+	}
 }
 ?>
