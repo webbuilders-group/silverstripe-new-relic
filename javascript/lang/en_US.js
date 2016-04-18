@@ -28,6 +28,10 @@ if(typeof(ss) == 'undefined' || typeof(ss.i18n) == 'undefined') {
         'NewRelicPerformanceReport.ERROR_RATE': 'Error Rate',
         'NewRelicPerformanceReport.ERROR_RATE_VALUE': 'Error Rate: %s',
         'NewRelicPerformanceReport.ERRORS_PER_MIN': 'Errors Per Minute: %s',
-        'NewRelicPerformanceReport.REQUESTS_PER_MIN': 'Requests Per Minute: %s'
+        'NewRelicPerformanceReport.REQUESTS_PER_MIN': 'Requests Per Minute: %s',
+        'NewRelicPerformanceReport.ERROR_RATE_WARN': 'Error Rate is above acceptable levels over the last 30 minutes',
+        'NewRelicPerformanceReport.ERROR_RATE_CRIT': 'Error Rate is well above acceptable levels over the last 30 minutes',
+        'NewRelicPerformanceReport.APDEX_WARN': 'Server Apdex is below acceptable levels over the last 30 minutes',
+        'NewRelicPerformanceReport.APDEX_CRIT': 'Server Apdex is well below acceptable levels over the last 30 minutes'
     });
 }

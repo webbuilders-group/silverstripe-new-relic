@@ -74,6 +74,21 @@
     text-shadow: #BFCAD2 1px 1px 0;
 }
 
+.NewRelicPerformanceReport .nr-report-graph .nr-report-title .nr-report-alert-icon {
+    background: url(./../images/alert-icon.png) no-repeat;
+    
+    display: inline-block;
+    
+    width: 22px;
+    height: 22px;
+    
+    vertical-align: top;
+}
+
+.NewRelicPerformanceReport .nr-report-graph.nr-report-graph-crit .nr-report-title .nr-report-alert-icon {
+    background-position: -22px 0;
+}
+
 .NewRelicPerformanceReport .nr-report-graph .nr-report-averages {
     float: right;
 }
@@ -121,6 +136,7 @@
     
     padding-bottom: 53%;
 }
+
 .NewRelicPerformanceReport .nr-report-graph .nr-report-inner {
     background: #FFFFFF;
     
@@ -279,7 +295,7 @@
     width: 22px;
     height: 22px;
     
-    vertical-align: middle;
+    vertical-align: top;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-help-text {

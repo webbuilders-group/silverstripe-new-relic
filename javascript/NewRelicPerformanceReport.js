@@ -281,6 +281,10 @@
                 self.find('.nr-report-graph-legend').remove();
                 
                 
+                //Remove the alert icon
+                self.find('.nr-report-header .nr-report-title .nr-report-alert-icon').remove();
+                
+                
                 //Display the loading spinner
                 self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').show();
             }
@@ -807,6 +811,30 @@
                     //Calculate Average
                     var avg=total/timeSlices.Apdex.length;
                     self.find('.nr-server .nr-value').text(avg.toFixed(2));
+                    
+                    
+                    //Alerting
+                    var warnLvl=parseFloat(self.attr('data-warn-lvl'));
+                    var critLvl=parseFloat(self.attr('data-crit-lvl'));
+                    if(warnLvl>0 && critLvl>0) {
+                        var alertIcon=self.find('.nr-report-header .nr-report-title .nr-report-alert-icon');
+                        
+                        if(avg<=critLvl) {
+                            if(alertIcon.length==0) {
+                                alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                            }
+                            
+                            alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.APDEX_CRIT', '_Server Apdex is well below acceptable levels over the last 30 minutes'));
+                            self.addClass('nr-report-graph-warn').removeClass('nr-report-graph-crit');
+                        }else if(avg<=warnLvl) {
+                            if(alertIcon.length==0) {
+                                alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                            }
+                            
+                            alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.APDEX_WARN', '_Server Apdex is below acceptable levels over the last 30 minutes'));
+                            self.removeClass('nr-report-graph-warn').addClass('nr-report-graph-crit');
+                        }
+                    }
                 }
                 
                 
@@ -1012,6 +1040,30 @@
                 //Calculate Percentage
                 var percentage=Math.round((total/reqTotal)*100);
                 self.find('.nr-rate-percent .nr-value').text(percentage+'%');
+                
+                
+                //Alerting
+                var warnLvl=parseFloat(self.attr('data-warn-lvl'));
+                var critLvl=parseFloat(self.attr('data-crit-lvl'));
+                if(warnLvl>0 && critLvl>0) {
+                    var alertIcon=self.find('.nr-report-header .nr-report-title .nr-report-alert-icon');
+                    
+                    if(percentage>=critLvl) {
+                        if(alertIcon.length==0) {
+                            alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                        }
+                        
+                        alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE_WARN', '_Error Rate is above acceptable levels over the last 30 minutes'));
+                        self.addClass('nr-report-graph-warn').removeClass('nr-report-graph-crit');
+                    }else if(percentage>=warnLvl) {
+                        if(alertIcon.length==0) {
+                            alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                        }
+                        
+                        alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE_CRIT', '_Error Rate is well above acceptable levels over the last 30 minutes'));
+                        self.removeClass('nr-report-graph-warn').addClass('nr-report-graph-crit');
+                    }
+                }
                 
                 
                 //Store the raw data

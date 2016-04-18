@@ -92,10 +92,10 @@
             </div>
         </div>
         
-        <div class="nr-report-graph nr-report-two-col nr-report-row-end nr-apdex">
+        <div class="nr-report-graph nr-report-two-col nr-report-row-end nr-apdex" data-warn-lvl="$ApdexWarnLvl.ATT" data-crit-lvl="$ApdexCritLvl.ATT">
             <div class="nr-report-header">
                 <div class="nr-report-title">
-                    <%t NewRelicPerformanceReport.APDEX_SCORE "_Apdex Score" %><a href="https://docs.newrelic.com/docs/general/apdex" class="nr-report-help" target="_blank"></a>
+                    <%t NewRelicPerformanceReport.APDEX_SCORE "_Apdex Score" %> <a href="https://docs.newrelic.com/docs/general/apdex" class="nr-report-help" target="_blank"></a>
                 </div>
                 
                 <div class="nr-report-averages">
@@ -130,7 +130,7 @@
             </div>
         </div>
         
-        <div class="nr-report-graph nr-report-two-col nr-error-rate">
+        <div class="nr-report-graph nr-report-two-col nr-error-rate" data-warn-lvl="$ErrorRateWarnLvl.ATT" data-crit-lvl="$ErrorRateCritLvl.ATT">
             <div class="nr-report-header">
                 <div class="nr-report-title">
                     <%t NewRelicPerformanceReport.ERROR_RATE "_Error Rate" %>
