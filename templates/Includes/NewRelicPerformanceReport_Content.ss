@@ -6,6 +6,10 @@
     </div>
     
     <div class="cms-content-fields center cms-panel-padded nr-report-wrapper" data-report-data-feed="$Link('overview-data')" data-report-refresh-rate="$RefreshRate">
+        <% if not $IsConfigured %>
+            <div class="message error"><%t NewRelicPerformanceReport.API_APP_CONFIG_ERROR "_New Relic API Key or Application ID is missing, check configuration" %></div>
+        <% end_if %>
+        
         <div class="nr-report-graph nr-report-two-col nr-server-response-time">
             <div class="nr-report-header">
                 <div class="nr-report-title">

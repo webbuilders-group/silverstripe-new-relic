@@ -1,6 +1,6 @@
 {
     "name": "webbuilders-group/silverstripe-new-relic",
-    "description": "Provides improved naming of transactions, error reporting and general tracking for SilverStripe site's on servers with the New Relic PHP Agent installed.",
+    "description": "Provides improved naming of transactions, error reporting and general tracking for SilverStripe site's on servers with the New Relic PHP Agent installed. As well as an overview of the Site's Performance.",
     "type": "silverstripe-module",
     "keywords": ["silverstripe", "new relic", "monitoring", "error reporting", "tracking", "analytics", "reporting"],
     "license": "BSD-3-Clause",

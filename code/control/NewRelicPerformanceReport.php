@@ -1,8 +1,8 @@
 <?php
 class NewRelicPerformanceReport extends LeftAndMain {
-    private static $url_segment='site-performance-overview';
+    private static $url_segment='site-performance';
     private static $menu_priority=-1;
-    private static $menu_title='Site Performance Overview';
+    private static $menu_title='Site Performance';
     
     private static $allowed_actions=array(
                                         'overview_data'
@@ -10,7 +10,7 @@ class NewRelicPerformanceReport extends LeftAndMain {
     
     
     /**
-     * New Relic Account Number
+     * New Relic Application ID
      * @var int
      * @config NewRelicPerformanceReport.application_id
      * @see https://docs.newrelic.com/docs/apis/rest-api-v2/requirements/finding-product-id#apm
@@ -32,6 +32,7 @@ class NewRelicPerformanceReport extends LeftAndMain {
      */
     private static $refresh_rate=300;
     
+    
     private static $casting=array(
                                 'RefreshRate'=>'Int'
                             );
@@ -47,14 +48,22 @@ class NewRelicPerformanceReport extends LeftAndMain {
         Requirements::javascript(SS_NR_BASE.'/thirdparty/nnnick/chart-js/chart.min.js');
     }
     
+    /**
+     * Detects whether the api key and application id is set or not
+     * @return {bool} Returns false if either the api key or application id is empty
+     */
+    public function getIsConfigured() {
+        $apiKey=$this->config()->api_key;
+        $appID=$this->config()->application_id;
+         
+        return (!empty($apiKey) && !empty($appID));
+    }
+    
 	/**
 	 * Gets the overview data from new relic
 	 */
 	public function overview_data() {
-	    $apiKey=$this->config()->api_key;
-	    $appID=$this->config()->application_id;
-	    
-	    if(empty($apiKey) || empty($appID)) {
+	    if(!$this->getIsConfigured()) {
             $msg=_t('NewRelicPerformanceReport.API_APP_CONFIG_ERROR', '_New Relic API Key or Application ID is missing, check configuration');
             $e=new SS_HTTPResponse_Exception($msg, 400);
             $e->getResponse()->addHeader('Content-Type', 'text/plain');
@@ -64,8 +73,8 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	        return;
 	    }
 	    
-	    $service=new RestfulService('https://api.newrelic.com/v2/applications/'.Convert::raw2url($appID).'/metrics/data.json', $this->config()->refresh_rate);
-	    $service->httpHeader('X-Api-Key:'.Convert::raw2url($apiKey));
+	    $service=new RestfulService('https://api.newrelic.com/v2/applications/'.Convert::raw2url($this->config()->application_id).'/metrics/data.json', $this->config()->refresh_rate);
+	    $service->httpHeader('X-Api-Key:'.Convert::raw2url($this->config()->api_key));
 	    
 	    $response=$service->request('', 'POST', 'names[]=HttpDispatcher&names[]=Apdex&names[]=EndUser/Apdex&names[]=Errors/all&names[]=EndUser&period=60');
 	    

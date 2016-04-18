@@ -1,6 +1,6 @@
 SilverStripe New Relic Integration
 =================
-Provides improved naming of transactions, error reporting and general tracking for SilverStripe site's on servers with the New Relic PHP Agent installed.
+Provides improved naming of transactions, error reporting and general tracking for SilverStripe site's on servers with the New Relic PHP Agent installed. It also surfaces an overview of information to the CMS such as Server Response Time, Visitor Load Time, Throughput, Apdex Score (Server and Visitor) as well as the Error Rate.
 
 ## Maintainer Contact
 * Ed Chipman ([UndefinedOffset](https://github.com/UndefinedOffset))
@@ -25,4 +25,4 @@ If you prefer you may also install manually:
 
 
 ## Configuration
-The configuration for the module can be found [here](docs/en/configuration.md) though most of the module will work out of the box provided the [New Relic PHP Agent](https://docs.newrelic.com/docs/agents/php-agent/getting-started/new-relic-php) and extension is loaded.
+The configuration for the module can be found [here](docs/en/configuration.md) though most of the module will work out of the box provided the [New Relic PHP Agent](https://docs.newrelic.com/docs/agents/php-agent/getting-started/new-relic-php) and extension is loaded. In order to get the CMS "Site Performance" section working you must configure the ``NewRelicPerformanceReport.application_id`` and ``NewRelicPerformanceReport.api_key`` options.
