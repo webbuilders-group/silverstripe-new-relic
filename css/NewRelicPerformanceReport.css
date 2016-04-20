@@ -1,3 +1,7 @@
+.NewRelicPerformanceReport .cms-panel-padded {
+    padding: 16px;
+}
+
 .NewRelicPerformanceReport .nr-report-graph {
     background: #B0BEC7;
     background-image: linear-gradient(#B0BEC7, #92A5B2);
