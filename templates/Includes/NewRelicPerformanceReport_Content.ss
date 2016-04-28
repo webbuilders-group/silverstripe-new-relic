@@ -105,15 +105,7 @@
                     </ul>
                 </div>
                 
-                <div class="nr-graph-tooltip arrow-top nr-report-help-text">
-                    <b><%t NewRelicPerformanceReport.SERVER_APDEX "_Server Apdex" %></b><br />
-                    <%t NewRelicPerformanceReport.SERVER_APDEX_HELP "_Your website's Apdex T-value is set to {{threshold}} seconds. That means requests responding in less than {{threshold}} seconds are satisfying, responding between 0.5 seconds and 2.0 seconds are tolerating, and responding in more than 2.0 seconds are frustrating." %>
-                    
-                    <hr />
-                    
-                    <b><%t NewRelicPerformanceReport.VISITOR_APDEX "_Visitor Apdex" %></b><br />
-                    <%t NewRelicPerformanceReport.VISITOR_APDEX_HELP "_Your app's Visitor Apdex T-value is set to {{enduser_threshold}} seconds. That means visitor requests responding in less than {{enduser_threshold}} seconds to the end user are satisfying, responding between {{enduser_threshold}} seconds and 28.0 seconds are tolerating, and responding in more than 28.0 seconds are frustrating." %>
-                </div>
+                <div class="nr-graph-tooltip arrow-top nr-report-help-text"></div>
             </div>
             
             <div class="nr-report-ratio">

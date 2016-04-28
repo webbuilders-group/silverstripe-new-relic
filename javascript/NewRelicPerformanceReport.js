@@ -735,6 +735,8 @@
          * Server Apdex and Browser Apdex Graph
          */
         $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-apdex').entwine({
+            HelpTextSet: false,
+            
             /**
              * Renders the graph data
              * @param {array} data Data for the graph
@@ -755,25 +757,36 @@
                 
                 
                 //Update the help text
-                var helpText=self.find('.nr-report-header .nr-report-help-text');
-                if(helpText) {
-                    var helpContent=helpText.html();
-                    
-                    //Replace the server apdex
-                    if(timeSlices.Apdex!==false) {
-                        helpContent=helpContent.replace(/\{\{threshold\}\}/g, timeSlices.Apdex[0].values.threshold);
-                    }else {
-                        helpContent=helpContent.replace(/\{\{threshold\}\}/g, ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
+                if(self.getHelpTextSet()==false) {
+                    var helpText=self.find('.nr-report-header .nr-report-help-text');
+                    if(helpText) {
+                        var helpContent='<b>'+ss.i18n._t('NewRelicPerformanceReport.SERVER_APDEX', '_Server Apdex')+'</b><br />';
+                        var sectionDesc=ss.i18n._t('NewRelicPerformanceReport.SERVER_APDEX_HELP', "Your website's Apdex T-value is set to {{threshold}} seconds. That means requests responding in less than {{threshold}} seconds are satisfying (s), responding between 0.5 seconds and 2.0 seconds are tolerating (t), and responding in more than 2.0 seconds are frustrating (f).");
+                        
+                        //Replace the server apdex
+                        if(timeSlices.Apdex!==false) {
+                            sectionDesc=sectionDesc.replace(/\{\{threshold\}\}/g, timeSlices.Apdex[0].values.threshold);
+                        }else {
+                            sectionDesc=sectionDesc.replace(/\{\{threshold\}\}/g, ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
+                        }
+                        helpContent+=sectionDesc+'<hr />';
+                        
+                        
+                        helpContent+='<b>'+ss.i18n._t('NewRelicPerformanceReport.VISITOR_APDEX', '_Visitor Apdex')+'</b><br />';
+                        sectionDesc=ss.i18n._t('NewRelicPerformanceReport.VISITOR_APDEX_HELP', "Your app's Visitor Apdex T-value is set to {{enduser_threshold}} seconds. That means visitor requests responding in less than {{enduser_threshold}} seconds to the end user are satisfying (s), responding between {{enduser_threshold}} seconds and 28.0 seconds are tolerating (t), and responding in more than 28.0 seconds are frustrating (f).");
+                        
+                        //Replace the EndUser apdex
+                        if(timeSlices.EndUser!==false) {
+                            sectionDesc=sectionDesc.replace(/\{\{enduser_threshold\}\}/g, timeSlices.EndUser[0].values.threshold);
+                        }else {
+                            sectionDesc=sectionDesc.replace(/\{\{enduser_threshold\}\}/g, ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
+                        }
+                        helpContent+=sectionDesc;
+                        
+                        helpText.html(helpContent);
                     }
                     
-                    //Replace the EndUser apdex
-                    if(timeSlices.EndUser!==false) {
-                        helpContent=helpContent.replace(/\{\{enduser_threshold\}\}/g, timeSlices.EndUser[0].values.threshold);
-                    }else {
-                        helpContent=helpContent.replace(/\{\{enduser_threshold\}\}/g, ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
-                    }
-                    
-                    helpText.html(helpContent);
+                    self.setHelpTextSet(true);
                 }
                 
                 
