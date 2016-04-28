@@ -16,5 +16,5 @@ en:
         SERVER_APDEX: "Server Apdex"
         VISITOR_APDEX: "Visitor Apdex"
         SERVER_APDEX_HELP: "Your website's Apdex T-value is set to {{threshold}} seconds. That means requests responding in less than {{threshold}} seconds are satisfying (s), responding between 0.5 seconds and 2.0 seconds are tolerating (t), and responding in more than 2.0 seconds are frustrating (f)."
-        VISITOR_APDEX_HELP: "Your app's Visitor Apdex T-value is set to {{enduser_threshold}} seconds. That means visitor requests responding in less than {{enduser_threshold}} seconds to the end user are satisfying (s), responding between {{threshold}} seconds and 28.0 seconds are tolerating (t), and responding in more than 28.0 seconds are frustrating (f)."
+        VISITOR_APDEX_HELP: "Your app's Visitor Apdex T-value is set to {{enduser_threshold}} seconds. That means visitor requests responding in less than {{enduser_threshold}} seconds to the end user are satisfying (s), responding between {{enduser_threshold}} seconds and 28.0 seconds are tolerating (t), and responding in more than 28.0 seconds are frustrating (f)."
         DATA_PROVIDED_BY: "Data provided by:"
