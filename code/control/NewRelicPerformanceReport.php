@@ -1,7 +1,7 @@
 <?php
 class NewRelicPerformanceReport extends LeftAndMain {
     private static $url_segment='site-performance';
-    private static $menu_priority=-1;
+    private static $menu_priority=-0.9;
     private static $menu_title='Site Performance';
     
     private static $allowed_actions=array(
