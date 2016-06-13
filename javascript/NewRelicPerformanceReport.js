@@ -1053,7 +1053,7 @@
                 
                 
                 //Calculate Percentage
-                var percentage=Math.round((total/reqTotal)*100);
+                var percentage=((total/reqTotal)*100).toFixed(2);
                 self.find('.nr-rate-percent .nr-value').text(percentage+'%');
                 
                 
@@ -1063,14 +1063,14 @@
                 if(warnLvl>0 && critLvl>0) {
                     var alertIcon=self.find('.nr-report-header .nr-report-title .nr-report-alert-icon');
                     
-                    if(percentage>=critLvl) {
+                    if(percentage>=warnLvl) {
                         if(alertIcon.length==0) {
                             alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
                         }
                         
                         alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE_WARN', '_Error Rate is above acceptable levels over the last 30 minutes'));
                         self.addClass('nr-report-graph-warn').removeClass('nr-report-graph-crit');
-                    }else if(percentage>=warnLvl) {
+                    }else if(percentage>=critLvl) {
                         if(alertIcon.length==0) {
                             alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
                         }
