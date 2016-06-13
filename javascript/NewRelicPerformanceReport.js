@@ -31,13 +31,15 @@
             /**
              * Destructor
              */
-            onunmatch: function() {
+            onremove: function() {
                 //Stop and clear the timer
                 var timer=$(this).getRefreshTimer();
                 if(timer) {
                     clearTimeout(timer);
                     
                     $(this).setRefreshTimer(null);
+                    
+                    console.log('called');
                 }
             },
             
