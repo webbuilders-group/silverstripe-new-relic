@@ -322,6 +322,11 @@
     vertical-align: bottom;
 }
 
+.NewRelicPerformanceReport .nr-data-provider span {
+    font-size: 85%;
+    color: #B9B9B9;
+}
+
 @media only screen and (max-width: 1200px) {
     .NewRelicPerformanceReport .nr-report-graph.nr-report-two-col {
         clear: both;

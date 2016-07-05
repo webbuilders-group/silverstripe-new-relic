@@ -14,3 +14,5 @@ en:
         THROUGHPUT: "Throughput"
         ERROR_RATE: "Error Rate"
         DATA_PROVIDED_BY: "Data provided by:"
+        AGENT_VERSION: "Agent Version: {version}"
+        AGENT_NOT_INSTALLED: "Agent Not Installed"

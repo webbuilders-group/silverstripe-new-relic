@@ -180,5 +180,13 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	public function getNRBase() {
 	    return SS_NR_BASE;
 	}
+	
+	/**
+	 * Gets the version of the installed PHP Agent
+	 * @return {string}
+	 */
+	public function getAgentVersion() {
+	    return phpversion('newrelic');
+	}
 }
 ?>

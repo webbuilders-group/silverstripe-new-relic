@@ -150,6 +150,17 @@
         </div>
         
         
-        <p class="nr-data-provider"><%t NewRelicPerformanceReport.DATA_PROVIDED_BY "_Data provided by:" %> <a href="http://newrelic.com" target="_blank"><img src="$NRBase/images/new-relic-full.png" alt="New Relic"/></a></p>
+        <p class="nr-data-provider">
+            <%t NewRelicPerformanceReport.DATA_PROVIDED_BY "_Data provided by:" %> <a href="http://newrelic.com" target="_blank"><img src="$NRBase/images/new-relic-full.png" alt="New Relic"/></a>
+            <br />
+            
+            <span>
+                <% if $AgentVersion %>
+                    <%t NewRelicPerformanceReport.AGENT_VERSION "_Agent Version: {version}" version=$AgentVersion %>
+                <% else %>
+                    <%t NewRelicPerformanceReport.AGENT_NOT_INSTALLED "_Agent Not Installed" %>
+                <% end_if %>
+            </span>
+        </p>
     </div>
 </div>
