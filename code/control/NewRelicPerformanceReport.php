@@ -111,10 +111,20 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	    //Build the base restful service object
 	    $service=new RestfulService('https://api.newrelic.com/v2/applications/'.Convert::raw2url($this->config()->application_id).'/metrics/data.json', $this->config()->refresh_rate);
 	    $service->httpHeader('X-Api-Key:'.Convert::raw2url($this->config()->api_key));
+	    $service->setQueryString(array(
+	                                   'names'=>array(
+        	                                           'HttpDispatcher',
+        	                                           'Apdex',
+        	                                           'EndUser/Apdex',
+        	                                           'Errors/all',
+        	                                           'EndUser'
+	                                               ),
+	                                   'period'=>60
+	                               ));
 	    
 	    
 	    //Perform the request
-	    $response=$service->request('', 'POST', 'names[]=HttpDispatcher&names[]=Apdex&names[]=EndUser/Apdex&names[]=Errors/all&names[]=EndUser&period=60');
+	    $response=$service->request();
 	    
 	    
 	    //Retrieve the body
