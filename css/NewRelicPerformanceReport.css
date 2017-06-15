@@ -173,7 +173,10 @@
     background: url(./../images/no-data.jpg) no-repeat center center;
 }
 
-.NewRelicPerformanceReport .nr-report-graph.no-data .cms-content-loading-spinner, .NewRelicPerformanceReport .nr-report-graph.no-data .cms-content-loading-overlay, .NewRelicPerformanceReport .nr-report-graph.no-data canvas {
+.NewRelicPerformanceReport .nr-report-graph.no-data .cms-content-loading-spinner,
+.NewRelicPerformanceReport .nr-report-graph.no-data .cms-content-loading-overlay,
+.NewRelicPerformanceReport .nr-report-graph.no-data canvas,
+.NewRelicPerformanceReport .nr-report-graph.no-data .nr-report-graph-legend {
     display: none;
 }
 
