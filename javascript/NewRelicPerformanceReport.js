@@ -105,11 +105,31 @@
                 
                 
                 //Start refresh timer
+                this.resetRefreshTimer();
+            },
+            
+            /**
+             * Stops the refresh timer
+             */
+            stopRefreshTimer: function() {
+                if(this.getRefreshTimer()) {
+                    clearTimeout(this.getRefreshTimer());
+                }
+            },
+            
+            /**
+             * Resets the refresh timer
+             */
+            resetRefreshTimer: function() {
+                if(this.getRefreshTimer()) {
+                    clearTimeout(this.getRefreshTimer());
+                }
+                
                 var self=$(this);
                 var refreshRate=parseInt(self.attr('data-report-refresh-rate'));
-                $(this).setRefreshTimer(setTimeout(function() {
-                                            self.refreshData();
-                                        }, (refreshRate>120 ? refreshRate+30:300)*1000));
+                self.setRefreshTimer(setTimeout(function() {
+                                                    self.refreshData();
+                                                }, (refreshRate>120 ? refreshRate+30:300)*1000));
             },
             
             /**
@@ -147,11 +167,11 @@
             
             /**
              * Handles when an error comes back from request
-             * @param {jqXHR} xhr jQuery XHR Response
-             * @param {string} status Status text  
              * @param {string} errorThrown HTML Error Text
+             * @param {string} status Status text  
+             * @param {jqXHR} xhr jQuery XHR Response
              */
-            _onRetrieveError: function(xhr, status, errorThrown) {
+            _onRetrieveError: function(errorThrown, status, xhr) {
                 console.error(xhr, status, errorThrown);
                 
                 $('.cms-content.NewRelicPerformanceReport .nr-report-graph').addClass('no-data');
