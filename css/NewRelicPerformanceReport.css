@@ -38,7 +38,7 @@
     margin-left: 1%;
 }
 
-.NewRelicPerformanceReport .nr-report-graph.nr-report-two-col.nr-report-row-end + .nr-report-two-col {
+.NewRelicPerformanceReport .nr-report-graph.nr-report-two-col:nth-child(2n) + .nr-report-two-col {
     clear: both;
     
     margin-left: 0;

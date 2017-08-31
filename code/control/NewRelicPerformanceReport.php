@@ -33,38 +33,21 @@ class NewRelicPerformanceReport extends LeftAndMain {
     private static $refresh_rate=300;
     
     /**
-     * The value that the average server apdex must reach to flag the graph as warning level
-     * @var float
-     * @config NewRelicPerformanceReport.apdex_warn_lvl
+     * Reports removed from the section
+     * @var array
+     * @config NewRelicPerformanceReport.remove_reports
      */
-    private static $apdex_warn_lvl=0.85;
-    
-    /**
-     * The value that the average server apdex must reach to flag the graph as critical
-     * @var float
-     * @config NewRelicPerformanceReport.apdex_crit_lvl
-     */
-    private static $apdex_crit_lvl=0.7;
-    
-    /**
-     * The value that the average error rate percentage must reach flag the graph as warning level
-     * @var float
-     * @config NewRelicPerformanceReport.error_rate_warn_lvl
-     */
-    
-    private static $error_rate_warn_lvl=1;
-    
-    /**
-     * The value that the average error rate percentage must reach flag the graph as critical
-     * @var float
-     * @config NewRelicPerformanceReport.error_rate_crit_lvl
-     */
-    private static $error_rate_crit_lvl=5;
+    private static $remove_reports=array(
+                                        'NRReportBase'
+                                    );
     
     
     private static $casting=array(
-                                'RefreshRate'=>'Int'
+                                'RefreshRate'=>'Int',
+                                'AttributesHTML'=>'HTMLVarchar'
                             );
+    
+    private $extraAttributes=array();
     
     
     public function init() {
@@ -79,13 +62,52 @@ class NewRelicPerformanceReport extends LeftAndMain {
     
     /**
      * Detects whether the api key and application id is set or not
-     * @return {bool} Returns false if either the api key or application id is empty
+     * @return bool Returns false if either the api key or application id is empty
      */
     public function getIsConfigured() {
         $apiKey=$this->config()->api_key;
         $appID=$this->config()->application_id;
          
         return (!empty($apiKey) && !empty($appID));
+    }
+    
+    /**
+     * Adds an extra attribute to the wrapper
+     * @param string $name Name of the attribute
+     * @param string $value Value of the attribute
+     * @return NewRelicPerformanceReport
+     */
+    public function addExtraAttribute($name, $value) {
+        $this->extraAttributes[$name]=$value;
+        return $this;
+    }
+    
+    /**
+     * Removes an extra attribute to the wrapper
+     * @param string $name Name of the attribute
+     * @return NewRelicPerformanceReport
+     */
+    public function removeExtraAttribute($name) {
+        if(array_key_exists($name, $this->extraAttributes)) {
+            unset($this->extraAttributes[$name]);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Gets the extra attributes as HTML
+     * @return string
+     */
+    public function getAttributesHTML() {
+        $html='';
+        if(count($this->extraAttributes)>0) {
+            foreach($this->extraAttributes as $name=>$value) {
+                $html.=' '.Convert::raw2att($name).'="'.Convert::raw2att($value).'"';
+            }
+        }
+        
+        return $html;
     }
     
 	/**
@@ -145,55 +167,36 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	
 	/**
 	 * Gets the refresh rate from the config
-	 * @return {int}
+	 * @return int
 	 */
 	public function getRefreshRate() {
 	    return $this->config()->refresh_rate;
 	}
 	
 	/**
-	 * Gets the apdex warning level from the config
-	 * @return {float}
-	 */
-	public function getApdexWarnLvl() {
-	    return $this->config()->apdex_warn_lvl;
-	}
-	
-	/**
-	 * Gets the apdex critical level from the config
-	 * @return {float}
-	 */
-	public function getApdexCritLvl() {
-	    return $this->config()->apdex_crit_lvl;
-	}
-	
-	/**
-	 * Gets the error rate warning level from the config
-	 * @return {float}
-	 */
-	public function getErrorRateWarnLvl() {
-	    return $this->config()->error_rate_warn_lvl;
-	}
-	
-	/**
-	 * Gets the error rate critical level from the config
-	 * @return {float}
-	 */
-	public function getErrorRateCritLvl() {
-	    return $this->config()->error_rate_crit_lvl;
-	}
-	
-	/**
 	 * Gets the base folder for the new relic module
-	 * @return {string}
+	 * @return string
 	 */
 	public function getNRBase() {
 	    return SS_NR_BASE;
 	}
 	
 	/**
+	 * Get the reports available in the performance report
+	 * @return ArrayList
+	 */
+	public function getReports() {
+	    $reportClasses=array_diff_key(ClassInfo::subclassesFor('NRReportBase'), array_combine($this->config()->remove_reports, $this->config()->remove_reports));
+	    foreach($reportClasses as $key=>$class) {
+	        $reportClasses[$key]=$class::create();
+	    }
+	    
+	    return ArrayList::create($reportClasses)->sort('SortOrder');
+	}
+	
+	/**
 	 * Gets the version of the installed PHP Agent
-	 * @return {string}
+	 * @return string
 	 */
 	public function getAgentVersion() {
 	    return phpversion('newrelic');

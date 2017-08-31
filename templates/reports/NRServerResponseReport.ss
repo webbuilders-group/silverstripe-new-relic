@@ -1,0 +1,26 @@
+<div class="nr-report-graph nr-report-two-col nr-server-response-time">
+    <div class="nr-report-header">
+        <div class="nr-report-title">
+            <%t NewRelicPerformanceReport.SERVER_RESPONSE_TIME "_Server Response Time" %>
+        </div>
+        
+        <div class="nr-report-averages">
+            <ul>
+                <li class="nr-server"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.AVERAGE "_Average" %></span></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="nr-report-ratio">
+        <div class="nr-report-inner">
+            <div class="nr-report-canvas-wrap">
+                <canvas class="nr-report-canvas"></canvas>
+                
+                <div class="nr-graph-tooltip"></div>
+            </div>
+            
+            <div class="cms-content-loading-overlay ui-widget-overlay-light"></div>
+            <div class="cms-content-loading-spinner"></div>
+        </div>
+    </div>
+</div>
