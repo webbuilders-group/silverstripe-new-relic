@@ -189,6 +189,7 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	    $reportClasses=array_diff_key(ClassInfo::subclassesFor('NRReportBase'), array_combine($this->config()->remove_reports, $this->config()->remove_reports));
 	    foreach($reportClasses as $key=>$class) {
 	        $reportClasses[$key]=$class::create();
+	        $reportClasses[$key]->loadRequirements();
 	    }
 	    
 	    return ArrayList::create($reportClasses)->sort('SortOrder');

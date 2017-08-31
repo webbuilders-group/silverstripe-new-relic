@@ -1,7 +1,7 @@
 <?php
 abstract class NRReportBase extends ViewableData {
     /**
-     * Order the report should appear in the list, lower number is higher on the list
+     * Order the report should appear in the list, lower number is higher on the page
      * @var int
      * @config NRReportBase.sort_order
      */

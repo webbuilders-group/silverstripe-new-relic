@@ -1,0 +1,60 @@
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tfoot th {
+    color: #B9B9B9;
+
+    text-transform: uppercase;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap > table.nr-report-table tbody tr.incident-row > td,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row > td {
+    cursor: pointer;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.incident-row.open,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-row.open,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.incident-row.open + tr.incident-detail-row,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-row.open + tr.violation-detail-row {
+    background: #F0F4F7;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.incident-row:hover > td,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row:hover > td {
+    background: #FFFAD6;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.incident-detail-row,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-detail-row {
+    display: none;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-row > td:first-child {
+    font-weight: bold;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row .type-flag {
+    display: block;
+
+    font-weight: normal;
+
+    margin-bottom: 5px;
+
+    text-transform: uppercase;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.incident-row.open > td,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.open > td {
+    border-bottom-color: transparent;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.Warning .type-flag {
+    color: #FBB85D;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.Critical .type-flag {
+    color: #D75968;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-detail-row table.nr-report-table,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-detail-row table.nr-report-table td,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-detail-row table.nr-report-table th {
+    border: 0;
+}

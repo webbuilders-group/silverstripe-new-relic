@@ -85,6 +85,7 @@
                 
                 
                 //Render the graph data for the HttpDispatcher
+                //TODO need to check before we call renderGraph() to make sure the report is present
                 $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-server-response-time').renderGraph(data.HttpDispatcher, response.from, response.to);
                 
                 
