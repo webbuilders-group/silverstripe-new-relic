@@ -817,6 +817,7 @@
                 var times=[];
                 var chartData=[];
                 var timesLoaded=false;
+                var alreadyCrit=false;
                 
                 //Add Server Apdex 
                 if(timeSlices.Apdex!==false) {
@@ -861,14 +862,15 @@
                             }
                             
                             alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.APDEX_CRIT', '_Server Apdex is well below acceptable levels over the last 30 minutes'));
-                            self.addClass('nr-report-graph-warn').removeClass('nr-report-graph-crit');
+                            self.addClass('nr-report-graph-crit');
+                            alreadyCrit=true;
                         }else if(avg<=warnLvl) {
                             if(alertIcon.length==0) {
                                 alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
                             }
                             
                             alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.APDEX_WARN', '_Server Apdex is below acceptable levels over the last 30 minutes'));
-                            self.removeClass('nr-report-graph-warn').addClass('nr-report-graph-crit');
+                            self.addClass('nr-report-graph-warn');
                         }
                     }
                 }
@@ -907,6 +909,39 @@
                     //Calculate Average
                     var avg=total/timeSlices.EndUser.length;
                     self.find('.nr-browser .nr-value').text(avg.toFixed(2));
+                    
+                    
+                    //Alerting
+                    var warnLvl=parseFloat(self.attr('data-browser-warn-lvl'));
+                    var critLvl=parseFloat(self.attr('data-browser-crit-lvl'));
+                    if(warnLvl>0 && critLvl>0) {
+                        var alertIcon=self.find('.nr-report-header .nr-report-title .nr-report-alert-icon');
+                        
+                        if(avg<=critLvl) {
+                            if(alertIcon.length==0) {
+                                alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                            }
+                            
+                            var alertIconTitle=alertIcon.attr('title');
+                            alertIcon.attr('title', (alertIconTitle ? alertIconTitle+'. ':'')+ss.i18n._t('NewRelicPerformanceReport.BROWSER_APDEX_CRIT', '_End User Apdex is well below acceptable levels over the last 30 minutes'));
+                            
+                            if(alreadyCrit==false) {
+                                self.removeClass('nr-report-graph-warn').addClass('nr-report-graph-crit');
+                            }
+                        }else if(avg<=warnLvl) {
+                            if(alertIcon.length==0) {
+                                alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                            }
+
+                            
+                            var alertIconTitle=alertIcon.attr('title');
+                            alertIcon.attr('title', (alertIconTitle ? alertIconTitle+'. ':'')+ss.i18n._t('NewRelicPerformanceReport.BROWSER_APDEX_WARN', '_End User Apdex is below acceptable levels over the last 30 minutes'));
+                            
+                            if(alreadyCrit==false) {
+                                self.addClass('nr-report-graph-warn');
+                            }
+                        }
+                    }
                 }
                 
                 
@@ -992,6 +1027,10 @@
              */
             reset: function() {
                 var self=$(this);
+                
+                self
+                    .removeClass('nr-report-graph-warn')
+                    .removeClass('nr-report-graph-crit');
                 
                 self.find('.nr-server .nr-value').text(ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
                 self.find('.nr-browser .nr-value').text(ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));

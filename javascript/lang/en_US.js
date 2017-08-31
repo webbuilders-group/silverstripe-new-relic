@@ -33,6 +33,8 @@ if(typeof(ss) == 'undefined' || typeof(ss.i18n) == 'undefined') {
         'NewRelicPerformanceReport.ERROR_RATE_CRIT': 'Error Rate is well above acceptable levels over the last 30 minutes',
         'NewRelicPerformanceReport.APDEX_WARN': 'Server Apdex is below acceptable levels over the last 30 minutes',
         'NewRelicPerformanceReport.APDEX_CRIT': 'Server Apdex is well below acceptable levels over the last 30 minutes',
+        'NewRelicPerformanceReport.BROWSER_APDEX_CRIT': 'End User Apdex is well below acceptable levels over the last 30 minutes',
+        'NewRelicPerformanceReport.BROWSER_APDEX_WARN': 'End User Apdex is below acceptable levels over the last 30 minutes',
         'NewRelicPerformanceReport.SERVER_APDEX': 'Server Apdex',
         'NewRelicPerformanceReport.VISITOR_APDEX': 'Visitor Apdex',
         'NewRelicPerformanceReport.SERVER_APDEX_HELP': "Your website's Apdex T-value is set to {{threshold}} seconds. That means requests responding in less than {{threshold}} seconds are satisfying (s), responding between 0.5 seconds and 2.0 seconds are tolerating (t), and responding in more than 2.0 seconds are frustrating (f).",

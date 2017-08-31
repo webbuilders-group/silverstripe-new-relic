@@ -16,6 +16,20 @@ class NRApdexScoreReport extends NRReportBase {
      */
     private static $apdex_crit_lvl=0.7;
     
+    /**
+     * The value that the average browser apdex must reach to flag the graph as warning level
+     * @var float
+     * @config NRApdexScoreReport.browser_apdex_warn_lvl
+     */
+    private static $browser_apdex_warn_lvl=0.85;
+    
+    /**
+     * The value that the average browser apdex must reach to flag the graph as critical
+     * @var float
+     * @config NRApdexScoreReport.browser_apdex_crit_lvl
+     */
+    private static $browser_apdex_crit_lvl=0.7;
+    
     
     /**
      * Loads any CSS/JS requirements needed for this report
@@ -36,6 +50,22 @@ class NRApdexScoreReport extends NRReportBase {
 	 */
 	public function getApdexCritLvl() {
 	    return $this->config()->apdex_crit_lvl;
+	}
+	
+	/**
+	 * Gets the browser apdex warning level from the config
+	 * @return float
+	 */
+	public function getBrowserApdexWarnLvl() {
+	    return $this->config()->browser_apdex_warn_lvl;
+	}
+	
+	/**
+	 * Gets the browser apdex critical level from the config
+	 * @return float
+	 */
+	public function getBrowserApdexCritLvl() {
+	    return $this->config()->browser_apdex_crit_lvl;
 	}
 }
 ?>

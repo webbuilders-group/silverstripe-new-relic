@@ -1,4 +1,4 @@
-<div class="nr-report-graph nr-report-two-col nr-apdex" data-warn-lvl="$ApdexWarnLvl.ATT" data-crit-lvl="$ApdexCritLvl.ATT">
+<div class="nr-report-graph nr-report-two-col nr-apdex" data-warn-lvl="$ApdexWarnLvl.ATT" data-crit-lvl="$ApdexCritLvl.ATT" data-browser-warn-lvl="$ApdexWarnLvl.ATT" data-browser-crit-lvl="$ApdexCritLvl.ATT">
     <div class="nr-report-header">
         <div class="nr-report-title">
             <%t NewRelicPerformanceReport.APDEX_SCORE "_Apdex Score" %> <a href="https://docs.newrelic.com/docs/general/apdex" class="nr-report-help" target="_blank"></a>
