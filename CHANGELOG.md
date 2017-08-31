@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.2.0](https://github.com/webbuilders-group/silverstripe-new-relic/tree/0.2.0) (2017-08-31)
+[Full Changelog](https://github.com/webbuilders-group/silverstripe-new-relic/compare/0.1.3...0.2.0)
+
+**Implemented enhancements:**
+
+- Separate Apdex for Browser and Server [\#7](https://github.com/webbuilders-group/silverstripe-new-relic/issues/7)
+- More flexible site performance blocks [\#6](https://github.com/webbuilders-group/silverstripe-new-relic/issues/6)
+- Ability to toggle server and visitor on/off [\#5](https://github.com/webbuilders-group/silverstripe-new-relic/issues/5)
+- Config options for viewing different panels [\#4](https://github.com/webbuilders-group/silverstripe-new-relic/issues/4)
+
 ## [0.1.3](https://github.com/webbuilders-group/silverstripe-new-relic/tree/0.1.3) (2017-02-10)
 [Full Changelog](https://github.com/webbuilders-group/silverstripe-new-relic/compare/0.1.2...0.1.3)
 
