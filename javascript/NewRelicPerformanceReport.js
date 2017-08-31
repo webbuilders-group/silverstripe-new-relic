@@ -38,8 +38,6 @@
                     clearTimeout(timer);
                     
                     $(this).setRefreshTimer(null);
-                    
-                    console.log('called');
                 }
             },
             
