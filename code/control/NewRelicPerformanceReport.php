@@ -131,7 +131,7 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	    
 	    
 	    //Build the base restful service object
-	    $service=new RestfulService('https://api.newrelic.com/v2/applications/'.Convert::raw2url($this->config()->application_id).'/metrics/data.json', $this->config()->refresh_rate);
+	    $service=new NRRestfulService('https://api.newrelic.com/v2/applications/'.Convert::raw2url($this->config()->application_id).'/metrics/data.json', $this->config()->refresh_rate);
 	    $service->httpHeader('X-Api-Key:'.Convert::raw2url($this->config()->api_key));
 	    $service->setQueryString(array(
 	                                   'names'=>array(
