@@ -254,6 +254,7 @@
     border-top-color: transparent;
     border-left-color: rgba(0, 0, 0, 0.8);
 }
+
 .NewRelicPerformanceReport .nr-report-graph .nr-graph-tooltip .time-span {
     display: block;
     

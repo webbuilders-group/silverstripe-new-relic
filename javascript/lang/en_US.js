@@ -5,7 +5,7 @@ if(typeof(ss) == 'undefined' || typeof(ss.i18n) == 'undefined') {
         'NewRelicPerformanceReport.LOAD_ERROR': 'Failed to retrieve data from New Relic',
         'NewRelicPerformanceReport.NOT_AVAILABLE': 'N/A',
         'NewRelicPerformanceReport.SERVER_RESPONSE_TIME': 'Server Response Time',
-        'NewRelicPerformanceReport.TIME_TO_TIME_PLURAL': '_%s minutes from %s - %s',
+        'NewRelicPerformanceReport.TIME_TO_TIME_PLURAL': '%s minutes from %s - %s',
         'NewRelicPerformanceReport.TIME_TO_TIME': '%s minute from %s - %s',
         'NewRelicPerformanceReport.AVERAGE_VALUE': '%s average',
         'NewRelicPerformanceReport.MAX_VALUE': '%s maximum',
