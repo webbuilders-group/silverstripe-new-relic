@@ -43,8 +43,8 @@ class NewRelicPerformanceReport extends LeftAndMain {
     
     
     private static $casting=array(
-                                'RefreshRate'=>'Int',
-                                'AttributesHTML'=>'HTMLVarchar'
+                                'getRefreshRate'=>'Int',
+                                'getAttributesHTML'=>'HTMLVarchar'
                             );
     
     private $extraAttributes=array();
