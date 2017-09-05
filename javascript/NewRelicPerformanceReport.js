@@ -83,24 +83,38 @@
                 
                 
                 //Render the graph data for the HttpDispatcher
-                //TODO need to check before we call renderGraph() to make sure the report is present
-                $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-server-response-time').renderGraph(data.HttpDispatcher, response.from, response.to);
+                var report=$('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-server-response-time');
+                if(report.length>0) {
+                    report.renderGraph(data.HttpDispatcher, response.from, response.to);
+                }
                 
                 
                 //Render the graph data for the EndUser
-                $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-browser-load-time').renderGraph(data.EndUser, response.from, response.to);
+                var report=$('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-browser-load-time');
+                if(report.length>0) {
+                    report.renderGraph(data.EndUser, response.from, response.to);
+                }
                 
                 
                 //Render the graph data for the Apdex and EndUser/Apdex
-                $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-apdex').renderGraph({Apdex: data.Apdex, EndUser: data['EndUser/Apdex']}, response.from, response.to);
+                var report=$('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-apdex');
+                if(report.length>0) {
+                    report.renderGraph({Apdex: data.Apdex, EndUser: data['EndUser/Apdex']}, response.from, response.to);
+                }
                 
                 
                 //Render the graph data for the Throughput
-                $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-throughput').renderGraph({HttpDispatcher: data.HttpDispatcher, EndUser: data.EndUser}, response.from, response.to);
+                var report=$('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-throughput');
+                if(report.length>0) {
+                    report.renderGraph({HttpDispatcher: data.HttpDispatcher, EndUser: data.EndUser}, response.from, response.to);
+                }
                 
                 
                 //Render the graph data for the Errors/all
-                $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-error-rate').renderGraph({HttpDispatcher: data.HttpDispatcher, Errors: data['Errors/all']}, response.from, response.to);
+                var report=$('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-error-rate');
+                if(report.length>0) {
+                    report.renderGraph({HttpDispatcher: data.HttpDispatcher, Errors: data['Errors/all']}, response.from, response.to);
+                }
                 
                 
                 //Start refresh timer
