@@ -265,8 +265,6 @@
              */
             showTooltip: function(tooltip) {
                 var tooltipDiv=$(this).find('.nr-report-canvas-wrap .nr-graph-tooltip');
-                var leftPos=(tooltip.caretX-Math.round(tooltipDiv.outerWidth()/2));
-                var topPos=(tooltip.caretY-22-tooltipDiv.outerHeight());
                 var wrapper=$(this).find('.nr-report-canvas-wrap');
                 var content=[];
                 for(var i=0;i<tooltip.body.length;i++) {
@@ -280,9 +278,13 @@
                         .removeClass('arrow-left')
                         .removeClass('arrow-right')
                         .html(content)
-                        .show()
-                        .css('left', leftPos+'px')
-                        .css('top', topPos+'px');
+                        .show();
+                
+                
+                var leftPos=(tooltip.caretX-Math.round(tooltipDiv.outerWidth()/2));
+                var topPos=(tooltip.caretY-22-tooltipDiv.outerHeight());
+                
+                tooltipDiv.css('left', leftPos+'px').css('top', topPos+'px');
                 
                 
                 //Alignment adjustment
