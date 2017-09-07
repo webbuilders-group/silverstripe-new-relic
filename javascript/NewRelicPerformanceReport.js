@@ -935,6 +935,7 @@
                 self.removeClass('no-data');
                 
                 
+                
                 //Update the help text
                 if(self.getHelpTextSet()==false) {
                     var helpText=self.find('.nr-report-header .nr-report-help-text');
@@ -974,6 +975,8 @@
                 var chartData=[];
                 var timesLoaded=false;
                 var alreadyCrit=false;
+                var alertIcon;
+                
                 
                 //Add Server Apdex 
                 if(timeSlices.Apdex!==false) {
@@ -1010,7 +1013,7 @@
                     var warnLvl=parseFloat(self.attr('data-warn-lvl'));
                     var critLvl=parseFloat(self.attr('data-crit-lvl'));
                     if(warnLvl>0 && critLvl>0) {
-                        var alertIcon=self.find('.nr-report-header .nr-report-title .nr-report-alert-icon');
+                        alertIcon=self.find('.nr-report-header .nr-report-title .nr-report-alert-icon');
                         
                         if(avg<=critLvl) {
                             if(alertIcon.length==0) {
@@ -1071,11 +1074,12 @@
                     var warnLvl=parseFloat(self.attr('data-browser-warn-lvl'));
                     var critLvl=parseFloat(self.attr('data-browser-crit-lvl'));
                     if(warnLvl>0 && critLvl>0) {
-                        var alertIcon=self.find('.nr-report-header .nr-report-title .nr-report-alert-icon');
+                        alertIcon=self.find('.nr-report-header .nr-report-title .nr-report-alert-icon');
                         
                         if(avg<=critLvl) {
                             if(alertIcon.length==0) {
-                                alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                                alertIcon=$('<span class="nr-report-alert-icon"></span>');
+                                self.find('.nr-report-header .nr-report-title').append(alertIcon);
                             }
                             
                             var alertIconTitle=alertIcon.attr('title');
@@ -1086,7 +1090,8 @@
                             }
                         }else if(avg<=warnLvl) {
                             if(alertIcon.length==0) {
-                                alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                                alertIcon=$('<span class="nr-report-alert-icon"></span>');
+                                self.find('.nr-report-header .nr-report-title').append(alertIcon);
                             }
 
                             
@@ -1239,6 +1244,9 @@
                 self.find('.nr-server .nr-value').text(ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
                 self.find('.nr-browser .nr-value').text(ss.i18n._t('NewRelicPerformanceReport.NOT_AVAILABLE', 'N/A'));
                 
+                //Remove the alert icon
+                self.find('.nr-report-header .nr-report-title .nr-report-alert-icon').remove();
+                
                 this._super();
             },
             
@@ -1329,14 +1337,16 @@
                     
                     if(percentage>=warnLvl) {
                         if(alertIcon.length==0) {
-                            alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                            alertIcon=$('<span class="nr-report-alert-icon"></span>');
+                            self.find('.nr-report-header .nr-report-title').append(alertIcon);
                         }
                         
                         alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE_WARN', '_Error Rate is above acceptable levels over the last 30 minutes'));
                         self.addClass('nr-report-graph-warn').removeClass('nr-report-graph-crit');
                     }else if(percentage>=critLvl) {
                         if(alertIcon.length==0) {
-                            alertIcon=self.find('.nr-report-header .nr-report-title').append('<span class="nr-report-alert-icon"></span>');
+                            alertIcon=$('<span class="nr-report-alert-icon"></span>');
+                            self.find('.nr-report-header .nr-report-title').append(alertIcon);
                         }
                         
                         alertIcon.attr('title', ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE_CRIT', '_Error Rate is well above acceptable levels over the last 30 minutes'));
