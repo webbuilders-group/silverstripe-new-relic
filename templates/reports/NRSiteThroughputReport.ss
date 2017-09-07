@@ -1,4 +1,4 @@
-<div class="nr-report-graph nr-report-two-col nr-throughput">
+<div class="nr-report-graph nr-report-legend-graph nr-report-two-col nr-throughput">
     <div class="nr-report-header">
         <div class="nr-report-title">
             <%t NewRelicPerformanceReport.THROUGHPUT "_Throughput" %>

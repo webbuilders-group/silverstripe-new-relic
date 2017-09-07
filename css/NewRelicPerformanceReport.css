@@ -140,7 +140,7 @@
     
     width: 100%;
     
-    padding-bottom: 53%;
+    padding-bottom: 52.4%;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-inner {
@@ -166,7 +166,16 @@
     position: relative;
     
     width: 100%;
-    height: 92.5%;
+    height: 100%;
+}
+
+.NewRelicPerformanceReport .nr-report-graph.nr-report-legend-graph .nr-report-canvas-wrap {
+    height: auto;
+    min-height: 92.5%;
+}
+
+.NewRelicPerformanceReport .nr-report-graph.nr-report-legend-graph .nr-report-ratio {
+    padding-bottom: 55%;
 }
 
 .NewRelicPerformanceReport .nr-report-graph.no-data .nr-report-canvas-wrap, .NewRelicPerformanceReport .nr-report-graph.no-data .nr-report-table-wrap {
