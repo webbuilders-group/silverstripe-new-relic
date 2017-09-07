@@ -96,17 +96,17 @@
                 }
                 
                 
-                //Render the graph data for the Apdex and EndUser/Apdex
-                var report=$('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-apdex');
-                if(report.length>0) {
-                    report.renderGraph({Apdex: data.Apdex, EndUser: data['EndUser/Apdex']}, response.from, response.to);
-                }
-                
-                
                 //Render the graph data for the Throughput
                 var report=$('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-throughput');
                 if(report.length>0) {
                     report.renderGraph({HttpDispatcher: data.HttpDispatcher, EndUser: data.EndUser}, response.from, response.to);
+                }
+                
+                
+                //Render the graph data for the Apdex and EndUser/Apdex
+                var report=$('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-apdex');
+                if(report.length>0) {
+                    report.renderGraph({Apdex: data.Apdex, EndUser: data['EndUser/Apdex']}, response.from, response.to);
                 }
                 
                 
@@ -245,9 +245,10 @@
             /**
              * Renders the point data into html to be used in the tooltip
              * @param {object} point Point object
+             * @param {object} rawData Raw data object
              * @return {string}
              */
-            tooltipTemplate: function(point) {
+            tooltipTemplate: function(point, rawData) {
                 return point.label+': '+point.value;
             },
             
@@ -264,14 +265,21 @@
              */
             showTooltip: function(tooltip) {
                 var tooltipDiv=$(this).find('.nr-report-canvas-wrap .nr-graph-tooltip');
-                var leftPos=(tooltip.x-Math.round(tooltipDiv.outerWidth()/2));
-                var topPos=(tooltip.y-14-tooltipDiv.outerHeight());
+                var leftPos=(tooltip.caretX-Math.round(tooltipDiv.outerWidth()/2));
+                var topPos=(tooltip.caretY-22-tooltipDiv.outerHeight());
                 var wrapper=$(this).find('.nr-report-canvas-wrap');
+                var content=[];
+                for(var i=0;i<tooltip.body.length;i++) {
+                    content.push(tooltip.body[i].lines.join('<br />'));
+                }
+                
+                content=content.join('<hr />');
+                
                 tooltipDiv
                         .removeClass('arrow-top')
                         .removeClass('arrow-left')
                         .removeClass('arrow-right')
-                        .html(tooltip.text)
+                        .html(content)
                         .show()
                         .css('left', leftPos+'px')
                         .css('top', topPos+'px');
@@ -279,21 +287,21 @@
                 
                 //Alignment adjustment
                 if(topPos<wrapper.position().top*-1) {
-                    tooltipDiv.addClass('arrow-top').css('top', (tooltip.y+14)+'px');
+                    tooltipDiv.addClass('arrow-top').css('top', (tooltip.caretY+12)+'px');
                 }
                 
                 if(leftPos<0) {
                     tooltipDiv
                             .removeClass('arrow-top')
                             .addClass('arrow-left')
-                            .css('left', (tooltip.x+14)+'px')
-                            .css('top', (tooltip.y-Math.round(tooltipDiv.outerHeight()/2))+'px');
+                            .css('left', (tooltip.caretX+14)+'px')
+                            .css('top', (tooltip.caretY-Math.round(tooltipDiv.outerHeight()/2)-7)+'px');
                 }else if(leftPos+tooltipDiv.outerWidth()>=wrapper.outerWidth()) {
                     tooltipDiv
                             .removeClass('arrow-top')
                             .addClass('arrow-right')
-                            .css('left', (tooltip.x-14-tooltipDiv.outerWidth())+'px')
-                            .css('top', (tooltip.y-Math.round(tooltipDiv.outerHeight()/2))+'px');
+                            .css('left', (tooltip.caretX-14-tooltipDiv.outerWidth())+'px')
+                            .css('top', (tooltip.caretY-Math.round(tooltipDiv.outerHeight()/2)-7)+'px');
                 }
             },
             
@@ -384,12 +392,13 @@
                 var chartData=[
                                {
                                 label: ss.i18n._t('NewRelicPerformanceReport.SERVER_RESPONSE_TIME', '_Server Response Time'),
-                                fillColor: 'rgba(40,112,153,0.2)',
-                                strokeColor: 'rgba(40,112,153,1)',
-                                pointColor: 'rgba(40,112,153,1)',
-                                pointStrokeColor: '#FFFFFF',
-                                pointHighlightFill: '#FFFFFF',
-                                pointHighlightStroke: 'rgba(40,112,153,1)',
+                                fill: true,
+                                backgroundColor: 'rgba(40,112,153,0.2)',
+                                borderColor: 'rgba(40,112,153,1)',
+                                pointBackgroundColor: 'rgba(40,112,153,1)',
+                                pointBorderColor: '#FFFFFF',
+                                pointHoverBackgroundColor: '#FFFFFF',
+                                pointHoverBorderColor: 'rgba(40,112,153,1)',
                                 data: [],
                                 rawData: timeSlices
                             }
@@ -410,22 +419,63 @@
                 
                 
                 //Init Graph
-                var chart=new Chart(context).NRLine({labels: times, datasets: chartData}, {
-                    bezierCurve: false,
-                    pointHitDetectionRadius: 10,
-                    scaleLabel: function(valuePayload) {
-                        return '  '+self._formatTime(valuePayload.value);
-                    },
-                    customTooltips: function(tooltip) {
-                        if(!tooltip) {
-                            self.hideTooltip();
-                            return;
+                var chart=new Chart(context, {
+                    type: 'line',
+                    data: {labels: times, datasets: chartData},
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            enabled: false,
+                            mode: 'index',
+                            position: 'nearest',
+                            custom: function(tooltip) {
+                                if(tooltip.opacity==0) {
+                                    self.hideTooltip();
+                                    return;
+                                }
+                                
+                                self.showTooltip(tooltip);
+                            },
+                            callbacks: {
+                                label: function(point, data) {
+                                    return self.tooltipTemplate(point, data.datasets[point.datasetIndex].rawData[point.index]);
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 0
+                        },
+                        hover: {
+                            animationDuration: 0
+                        },
+                        responsiveAnimationDuration: 0,
+                        elements: {
+                            point: {
+                                radius: 4,
+                                hitRadius: 6,
+                            },
+                            line: {
+                                tension: 0
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 90
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    userCallback: function(tick) {
+                                        return '  '+self._formatTime(tick);
+                                    }
+                                }
+                            }]
                         }
-                        
-                        self.showTooltip(tooltip);
-                    },
-                    tooltipTemplate: function(point) {
-                        return self.tooltipTemplate(point);
                     }
                 });
                 
@@ -440,21 +490,22 @@
             /**
              * Renders the point data into html to be used in the tooltip
              * @param {object} point Point object
+             * @param {object} rawData Raw data object
              * @return {string}
              */
-            tooltipTemplate: function(point) {
+            tooltipTemplate: function(point, rawData) {
                 var self=$(this);
                 var result='';
-                var toTime=new Date(point.rawData.to);
-                var fromTime=new Date(point.rawData.from);
+                var toTime=new Date(rawData.to);
+                var fromTime=new Date(rawData.from);
                 var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
                 var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
                 
                 result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
-                result+=ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AVERAGE_VALUE', '_%s average'), self._formatTime(point.rawData.values.average_response_time));
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MAX_VALUE', '_%s maximum'), self._formatTime(point.rawData.values.max_response_time));
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MIN_VALUE', '_%s minimum'), self._formatTime(point.rawData.values.min_response_time));
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AMOUNT_REQUESTS', '_%s requests'), point.rawData.values.call_count);
+                result+=ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AVERAGE_VALUE', '_%s average'), self._formatTime(rawData.values.average_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MAX_VALUE', '_%s maximum'), self._formatTime(rawData.values.max_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MIN_VALUE', '_%s minimum'), self._formatTime(rawData.values.min_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AMOUNT_REQUESTS', '_%s requests'), rawData.values.call_count);
                 
                 return result;
             },
@@ -498,12 +549,13 @@
                 var chartData=[
                                {
                                 label: 'Visitor Response Time',
-                                fillColor: 'rgba(40,112,153,0.2)',
-                                strokeColor: 'rgba(40,112,153,1)',
-                                pointColor: 'rgba(40,112,153,1)',
-                                pointStrokeColor: '#FFFFFF',
-                                pointHighlightFill: '#FFFFFF',
-                                pointHighlightStroke: 'rgba(40,112,153,1)',
+                                fill: true,
+                                backgroundColor: 'rgba(40,112,153,0.2)',
+                                borderColor: 'rgba(40,112,153,1)',
+                                pointBackgroundColor: 'rgba(40,112,153,1)',
+                                pointBorderColor: '#FFFFFF',
+                                pointHoverBackgroundColor: '#FFFFFF',
+                                pointHoverBorderColor: 'rgba(40,112,153,1)',
                                 data: [],
                                 rawData: timeSlices
                             }
@@ -522,22 +574,63 @@
                 var avg=Math.round(total/timeSlices.length);
                 self.find('.nr-browser .nr-value').text(self._formatTime(avg));
                 
-                var chart=new Chart(context).NRLine({labels: times, datasets: chartData}, {
-                    bezierCurve: false,
-                    pointHitDetectionRadius: 10,
-                    scaleLabel: function(valuePayload) {
-                        return '  '+self._formatTime(valuePayload.value);
-                    },
-                    customTooltips: function(tooltip) {
-                        if(!tooltip) {
-                            self.hideTooltip();
-                            return;
+                var chart=new Chart(context, {
+                    type: 'line',
+                    data: {labels: times, datasets: chartData},
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            enabled: false,
+                            mode: 'index',
+                            position: 'nearest',
+                            custom: function(tooltip) {
+                                if(tooltip.opacity==0) {
+                                    self.hideTooltip();
+                                    return;
+                                }
+                                
+                                self.showTooltip(tooltip);
+                            },
+                            callbacks: {
+                                label: function(point, data) {
+                                    return self.tooltipTemplate(point, data.datasets[point.datasetIndex].rawData[point.index]);
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 0
+                        },
+                        hover: {
+                            animationDuration: 0
+                        },
+                        responsiveAnimationDuration: 0,
+                        elements: {
+                            point: {
+                                radius: 4,
+                                hitRadius: 6,
+                            },
+                            line: {
+                                tension: 0
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 90
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    userCallback: function(tick) {
+                                        return '  '+self._formatTime(tick);
+                                    }
+                                }
+                            }]
                         }
-                        
-                        self.showTooltip(tooltip);
-                    },
-                    tooltipTemplate: function(point) {
-                        return self.tooltipTemplate(point);
                     }
                 });
                 
@@ -553,21 +646,22 @@
             /**
              * Renders the point data into html to be used in the tooltip
              * @param {object} point Point object
+             * @param {object} rawData Raw data object
              * @return {string}
              */
-            tooltipTemplate: function(point) {
+            tooltipTemplate: function(point, rawData) {
                 var self=$(this);
                 var result='';
-                var toTime=new Date(point.rawData.to);
-                var fromTime=new Date(point.rawData.from);
+                var toTime=new Date(rawData.to);
+                var fromTime=new Date(rawData.from);
                 var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
                 var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
                 
                 result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
-                result+=ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AVERAGE_VALUE', '_%s average'), self._formatTime(point.rawData.values.average_response_time));
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MAX_VALUE', '_%s maximum'), self._formatTime(point.rawData.values.max_response_time));
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MIN_VALUE', '_%s minimum'), self._formatTime(point.rawData.values.min_response_time));
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AMOUNT_REQUESTS', '_%s requests'), point.rawData.values.call_count);
+                result+=ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AVERAGE_VALUE', '_%s average'), self._formatTime(rawData.values.average_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MAX_VALUE', '_%s maximum'), self._formatTime(rawData.values.max_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.MIN_VALUE', '_%s minimum'), self._formatTime(rawData.values.min_response_time));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.AMOUNT_REQUESTS', '_%s requests'), rawData.values.call_count);
                 
                 return result;
             },
@@ -624,12 +718,12 @@
 
                     chartData.push({
                         label: ss.i18n._t('NewRelicPerformanceReport.SERVER_REQUESTS', '_Server Requests'),
-                        fillColor: 'rgba(40,112,153,0.2)',
-                        strokeColor: 'rgba(40,112,153,1)',
-                        pointColor: 'rgba(40,112,153,1)',
-                        pointStrokeColor: '#FFFFFF',
-                        pointHighlightFill: '#FFFFFF',
-                        pointHighlightStroke: 'rgba(40,112,153,1)',
+                        backgroundColor: 'rgba(40,112,153,0.2)',
+                        borderColor: 'rgba(40,112,153,1)',
+                        pointBackgroundColor: 'rgba(40,112,153,1)',
+                        pointBorderColor: '#FFFFFF',
+                        pointHoverBackgroundColor: '#FFFFFF',
+                        pointHoverBorderColor: 'rgba(40,112,153,1)',
                         data: setData,
                         rawData: timeSlices.HttpDispatcher
                     });
@@ -660,12 +754,12 @@
                     
                     chartData.push({
                         label: ss.i18n._t('NewRelicPerformanceReport.VISITOR_REQUESTS', '_Visitor Requests'),
-                        fillColor: 'rgba(146,165,178,0.2)',
-                        strokeColor: 'rgba(146,165,178,1)',
-                        pointColor: 'rgba(146,165,178,1)',
-                        pointStrokeColor: "#FFFFFF",
-                        pointHighlightFill: '#FFFFFF',
-                        pointHighlightStroke: 'rgba(146,165,178,1)',
+                        backgroundColor: 'rgba(146,165,178,0.2)',
+                        borderColor: 'rgba(146,165,178,1)',
+                        pointBackgroundColor: 'rgba(146,165,178,1)',
+                        pointBorderColor: "#FFFFFF",
+                        pointHoverBackgroundColor: '#FFFFFF',
+                        pointHoverBorderColor: 'rgba(146,165,178,1)',
                         data: setData,
                         rawData: timeSlices.EndUser
                     });
@@ -679,23 +773,71 @@
                 }
                 
                 
-                var chart=new Chart(context).NRLine({labels: times, datasets: chartData.reverse()}, {
-                    bezierCurve: false,
-                    pointHitDetectionRadius: 10,
-                    legendTemplate: '<ul class="nr-report-graph-legend"><% for (var i=datasets.length-1; i>=0; i--){%><li style="background-color:<%=datasets[i].strokeColor%>;color:<%=datasets[i].pointStrokeColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
-                    scaleLabel: function(valuePayload) {
-                        return '  '+parseFloat(valuePayload.value).toFixed(2);
-                    },
-                    customTooltips: function(tooltip) {
-                        if(!tooltip) {
-                            self.hideTooltip();
-                            return;
+                var chart=new Chart(context, {
+                    type: 'line',
+                    data: {labels: times, datasets: chartData.reverse()},
+                    options: {
+                        legendCallback: function() {
+                            var html='<ul class="nr-report-graph-legend">';
+                            for(var i=chartData.length-1;i>=0;i--) {
+                                html+='<li style="background-color:'+chartData[i].borderColor+';color:'+chartData[i].pointBorderColor+'">'+(chartData[i].label ? chartData[i].label:'')+'</li>';
+                            }
+                            
+                            return html+'</ul>';
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            enabled: false,
+                            mode: 'index',
+                            position: 'nearest',
+                            custom: function(tooltip) {
+                                if(tooltip.opacity==0) {
+                                    self.hideTooltip();
+                                    return;
+                                }
+                                
+                                self.showTooltip(tooltip);
+                            },
+                            callbacks: {
+                                label: function(point, data) {
+                                    return self.tooltipTemplate(point, data.datasets[point.datasetIndex].rawData[point.index], data.datasets[point.datasetIndex].label);
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 0
+                        },
+                        hover: {
+                            animationDuration: 0
+                        },
+                        responsiveAnimationDuration: 0,
+                        elements: {
+                            point: {
+                                radius: 4,
+                                hitRadius: 6,
+                            },
+                            line: {
+                                tension: 0
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 90
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    userCallback: function(tick) {
+                                        return '  '+parseFloat(tick).toFixed(2);
+                                    }
+                                }
+                            }]
                         }
-                        
-                        self.showTooltip(tooltip);
-                    },
-                    multiTooltipTemplate: function(point) {
-                        return self.tooltipTemplate(point);
                     }
                 });
                 
@@ -717,16 +859,14 @@
              * @param {object} tooltip Tooltip positioning data
              */
             showTooltip: function(tooltip) {
-                if(tooltip.labels) {
-                    tooltip.labels=tooltip.labels.reverse();
+                if(tooltip.body.length>0) {
+                    tooltip.body=tooltip.body.reverse();
                     var i=1;
-                    while(i<tooltip.labels.length) {
-                        tooltip.labels[i]=tooltip.labels[i].replace(/<span class="time-span">(.*?)<\/span>/, '');
+                    while(i<tooltip.body.length) {
+                        tooltip.body[i]={lines: [tooltip.body[i].lines.join('').replace(/<span class="time-span">(.*?)<\/span>/, '')]};
                         
                         i++;
                     }
-                    
-                    tooltip.text=tooltip.labels.join('<hr/>');
                 }
                 
                 return this._super(tooltip);
@@ -735,19 +875,21 @@
             /**
              * Renders the point data into html to be used in the tooltip
              * @param {object} point Point object
+             * @param {object} rawData Raw data object
+             * @param {string} datasetLabel Data Set Label
              * @return {string}
              */
-            tooltipTemplate: function(point) {
+            tooltipTemplate: function(point, rawData, datasetLabel) {
                 var self=$(this);
                 var result='';
-                var toTime=new Date(point.rawData.to);
-                var fromTime=new Date(point.rawData.from);
+                var toTime=new Date(rawData.to);
+                var fromTime=new Date(rawData.from);
                 var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
                 var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
                 
                 result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
-                result+='<b>'+point.datasetLabel+'</b>';
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.RPM_VALUE', '_%s rpm'), point.rawData.values.call_count.toFixed(2));
+                result+='<b>'+datasetLabel+'</b>';
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.RPM_VALUE', '_%s rpm'), rawData.values.call_count.toFixed(2));
                 
                 return result;
             },
@@ -844,12 +986,12 @@
 
                     chartData.push({
                         label: ss.i18n._t('NewRelicPerformanceReport.SERVER_APDEX', '_Server Apdex'),
-                        fillColor: 'rgba(40,112,153,0.2)',
-                        strokeColor: 'rgba(40,112,153,1)',
-                        pointColor: 'rgba(40,112,153,1)',
-                        pointStrokeColor: '#FFFFFF',
-                        pointHighlightFill: '#FFFFFF',
-                        pointHighlightStroke: 'rgba(40,112,153,1)',
+                        backgroundColor: 'rgba(40,112,153,0.2)',
+                        borderColor: 'rgba(40,112,153,1)',
+                        pointBackgroundColor: 'rgba(40,112,153,1)',
+                        pointBorderColor: '#FFFFFF',
+                        pointHoverBackgroundColor: '#FFFFFF',
+                        pointHoverBorderColor: 'rgba(40,112,153,1)',
                         data: setData,
                         rawData: timeSlices.Apdex
                     });
@@ -905,12 +1047,12 @@
                     
                     chartData.push({
                         label: ss.i18n._t('NewRelicPerformanceReport.VISITOR_APDEX', '_Visitor Apdex'),
-                        fillColor: 'rgba(146,165,178,0.2)',
-                        strokeColor: 'rgba(146,165,178,1)',
-                        pointColor: 'rgba(146,165,178,1)',
-                        pointStrokeColor: "#FFFFFF",
-                        pointHighlightFill: '#FFFFFF',
-                        pointHighlightStroke: 'rgba(146,165,178,1)',
+                        backgroundColor: 'rgba(146,165,178,0.2)',
+                        borderColor: 'rgba(146,165,178,1)',
+                        pointBackgroundColor: 'rgba(146,165,178,1)',
+                        pointBorderColor: "#FFFFFF",
+                        pointHoverBackgroundColor: '#FFFFFF',
+                        pointHoverBorderColor: 'rgba(146,165,178,1)',
                         data: setData,
                         rawData: timeSlices.EndUser
                     });
@@ -957,23 +1099,71 @@
                 }
                 
                 
-                var chart=new Chart(context).NRLine({labels: times, datasets: chartData.reverse()}, {
-                    bezierCurve: false,
-                    pointHitDetectionRadius: 10,
-                    legendTemplate: '<ul class="nr-report-graph-legend"><% for (var i=datasets.length-1; i>=0; i--){%><li style="background-color:<%=datasets[i].strokeColor%>;color:<%=datasets[i].pointStrokeColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
-                    scaleLabel: function(valuePayload) {
-                        return '  '+parseFloat(valuePayload.value).toFixed(2);
-                    },
-                    customTooltips: function(tooltip) {
-                        if(!tooltip) {
-                            self.hideTooltip();
-                            return;
+                var chart=new Chart(context, {
+                    type: 'line',
+                    data: {labels: times, datasets: chartData.reverse()},
+                    options: {
+                        legendCallback: function() {
+                            var html='<ul class="nr-report-graph-legend">';
+                            for(var i=chartData.length-1;i>=0;i--) {
+                                html+='<li style="background-color:'+chartData[i].borderColor+';color:'+chartData[i].pointBorderColor+'">'+(chartData[i].label ? chartData[i].label:'')+'</li>';
+                            }
+                            
+                            return html+'</ul>';
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            enabled: false,
+                            mode: 'index',
+                            position: 'nearest',
+                            custom: function(tooltip) {
+                                if(tooltip.opacity==0) {
+                                    self.hideTooltip();
+                                    return;
+                                }
+                                
+                                self.showTooltip(tooltip);
+                            },
+                            callbacks: {
+                                label: function(point, data) {
+                                    return self.tooltipTemplate(point, data.datasets[point.datasetIndex].rawData[point.index], data.datasets[point.datasetIndex].label);
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 0
+                        },
+                        hover: {
+                            animationDuration: 0
+                        },
+                        responsiveAnimationDuration: 0,
+                        elements: {
+                            point: {
+                                radius: 4,
+                                hitRadius: 6,
+                            },
+                            line: {
+                                tension: 0
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 90
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    userCallback: function(tick) {
+                                        return '  '+parseFloat(tick).toFixed(2);
+                                    }
+                                }
+                            }]
                         }
-                        
-                        self.showTooltip(tooltip);
-                    },
-                    multiTooltipTemplate: function(point) {
-                        return self.tooltipTemplate(point);
                     }
                 });
                 
@@ -995,16 +1185,14 @@
              * @param {object} tooltip Tooltip positioning data
              */
             showTooltip: function(tooltip) {
-                if(tooltip.labels) {
-                    tooltip.labels=tooltip.labels.reverse();
+                if(tooltip.body.length>0) {
+                    tooltip.body=tooltip.body.reverse();
                     var i=1;
-                    while(i<tooltip.labels.length) {
-                        tooltip.labels[i]=tooltip.labels[i].replace(/<span class="time-span">(.*?)<\/span>/, '');
+                    while(i<tooltip.body.length) {
+                        tooltip.body[i]={lines: [tooltip.body[i].lines.join('').replace(/<span class="time-span">(.*?)<\/span>/, '')]};
                         
                         i++;
                     }
-                    
-                    tooltip.text=tooltip.labels.join('<hr/>');
                 }
                 
                 return this._super(tooltip);
@@ -1013,23 +1201,25 @@
             /**
              * Renders the point data into html to be used in the tooltip
              * @param {object} point Point object
+             * @param {object} rawData Raw data object
+             * @param {string} datasetLabel Data Set Label
              * @return {string}
              */
-            tooltipTemplate: function(point) {
+            tooltipTemplate: function(point, rawData, datasetLabel) {
                 var self=$(this);
                 var result='';
-                var toTime=new Date(point.rawData.to);
-                var fromTime=new Date(point.rawData.from);
+                var toTime=new Date(rawData.to);
+                var fromTime=new Date(rawData.from);
                 var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
                 var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
                 
                 result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
-                result+='<b>'+point.datasetLabel+'</b>';
-                result+='<br />'+point.rawData.values.score.toFixed(2)+' '+self._calculateRating(point.rawData.values.score);
-                result+='<br />Sample Size: '+point.rawData.values.count;
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.SATISFIED_VALUE', '_Satisfied: %s'), point.rawData.values.s+' ('+(point.rawData.values.count>0 ? Math.round((point.rawData.values.s/point.rawData.values.count)*100):0)+'%)');
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.TOLERATING_VALUE', '_Tolerating: %s'),point.rawData.values.t+' ('+(point.rawData.values.count>0 ? Math.round((point.rawData.values.t/point.rawData.values.count)*100):0)+'%)');
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.FRUSTRATED_VALUE', '_Frustrated: %s'), point.rawData.values.f+' ('+(point.rawData.values.count>0 ? Math.round((point.rawData.values.f/point.rawData.values.count)*100):0)+'%)');
+                result+='<b>'+datasetLabel+'</b>';
+                result+='<br />'+rawData.values.score.toFixed(2)+' '+self._calculateRating(rawData.values.score);
+                result+='<br />Sample Size: '+rawData.values.count;
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.SATISFIED_VALUE', '_Satisfied: %s'), rawData.values.s+' ('+(rawData.values.count>0 ? Math.round((rawData.values.s/rawData.values.count)*100):0)+'%)');
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.TOLERATING_VALUE', '_Tolerating: %s'),rawData.values.t+' ('+(rawData.values.count>0 ? Math.round((rawData.values.t/rawData.values.count)*100):0)+'%)');
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.FRUSTRATED_VALUE', '_Frustrated: %s'), rawData.values.f+' ('+(rawData.values.count>0 ? Math.round((rawData.values.f/rawData.values.count)*100):0)+'%)');
                 
                 return result;
             },
@@ -1099,12 +1289,12 @@
                 var times=[];
                 var chartData=[{
                                 label: ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE', '_Error Rate'),
-                                fillColor: 'rgba(40,112,153,0.2)',
-                                strokeColor: 'rgba(40,112,153,1)',
-                                pointColor: 'rgba(40,112,153,1)',
-                                pointStrokeColor: '#FFFFFF',
-                                pointHighlightFill: '#FFFFFF',
-                                pointHighlightStroke: 'rgba(40,112,153,1)',
+                                backgroundColor: 'rgba(40,112,153,0.2)',
+                                borderColor: 'rgba(40,112,153,1)',
+                                pointBackgroundColor: 'rgba(40,112,153,1)',
+                                pointBorderColor: '#FFFFFF',
+                                pointHoverBackgroundColor: '#FFFFFF',
+                                pointHoverBorderColor: 'rgba(40,112,153,1)',
                                 data: [],
                                 rawData: []
                            }];
@@ -1158,22 +1348,63 @@
                 
                 
                 //Init Graph
-                var chart=new Chart(context).NRLine({labels: times, datasets: chartData}, {
-                    bezierCurve: false,
-                    pointHitDetectionRadius: 10,
-                    scaleLabel: function(valuePayload) {
-                        return '  '+parseFloat(valuePayload.value).toFixed(3)+'%';
-                    },
-                    customTooltips: function(tooltip) {
-                        if(!tooltip) {
-                            self.hideTooltip();
-                            return;
+                var chart=new Chart(context, {
+                    type: 'line',
+                    data: {labels: times, datasets: chartData},
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            enabled: false,
+                            mode: 'index',
+                            position: 'nearest',
+                            custom: function(tooltip) {
+                                if(tooltip.opacity==0) {
+                                    self.hideTooltip();
+                                    return;
+                                }
+                                
+                                self.showTooltip(tooltip);
+                            },
+                            callbacks: {
+                                label: function(point, data) {
+                                    return self.tooltipTemplate(point, data.datasets[point.datasetIndex].rawData[point.index]);
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 0
+                        },
+                        hover: {
+                            animationDuration: 0
+                        },
+                        responsiveAnimationDuration: 0,
+                        elements: {
+                            point: {
+                                radius: 4,
+                                hitRadius: 6,
+                            },
+                            line: {
+                                tension: 0
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 90
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    userCallback: function(tick) {
+                                        return '  '+parseFloat(tick).toFixed(3)+'%';
+                                    }
+                                }
+                            }]
                         }
-                        
-                        self.showTooltip(tooltip);
-                    },
-                    tooltipTemplate: function(point) {
-                        return self.tooltipTemplate(point);
                     }
                 });
                 
@@ -1188,20 +1419,21 @@
             /**
              * Renders the point data into html to be used in the tooltip
              * @param {object} point Point object
+             * @param {object} rawData Raw data object
              * @return {string}
              */
-            tooltipTemplate: function(point) {
+            tooltipTemplate: function(point, rawData) {
                 var self=$(this);
                 var result='';
-                var toTime=new Date(point.rawData.to);
-                var fromTime=new Date(point.rawData.from);
+                var toTime=new Date(rawData.to);
+                var fromTime=new Date(rawData.from);
                 var timeDiff=Math.floor((toTime.getTime()-fromTime.getTime())/60/1000);
                 var timeString=(timeDiff>1 ? ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME_PLURAL', '_%s minutes %s from %s - %s'):ss.i18n._t('NewRelicPerformanceReport.TIME_TO_TIME', '_%s minute %s from %s - %s'));
                 
                 result+='<span class="time-span">'+ss.i18n.sprintf(timeString, timeDiff, self._formatDateTime(fromTime), self._formatDateTime(toTime))+'</span>';
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE_VALUE', '_Error Rate: %s'), ((point.rawData.values.error_count/point.rawData.values.call_count)*100).toFixed(3));
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.ERRORS_PER_MIN', '_Errors Per Minute: %s'), point.rawData.values.errors_per_minute);
-                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.REQUESTS_PER_MIN', '_Requests Per Minute: %s'), point.rawData.values.call_count);
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.ERROR_RATE_VALUE', '_Error Rate: %s'), ((rawData.values.error_count/rawData.values.call_count)*100).toFixed(3));
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.ERRORS_PER_MIN', '_Errors Per Minute: %s'), rawData.values.errors_per_minute);
+                result+='<br />'+ss.i18n.sprintf(ss.i18n._t('NewRelicPerformanceReport.REQUESTS_PER_MIN', '_Requests Per Minute: %s'), rawData.values.call_count);
                 
                 return result;
             },
@@ -1223,9 +1455,8 @@
         //Set Chart Defaults
         Chart.defaults.global.responsive=true;
         
-        Chart.types.Line.extend({
-            name: 'NRLine',
-            initialize:  function(data){
+        /*Chart.controllers.NRLine=Chart.controllers.line.extend({
+            initialize: function(data){
                 //Declare the extension of the default point, to cater for the options passed in to the constructor
                 this.PointClass=Chart.Point.extend({
                     offsetGridLines: this.options.offsetGridLines,
@@ -1247,12 +1478,12 @@
                     Chart.helpers.bindEvents(this, this.options.tooltipEvents, function(evt){
                         var activePoints=(evt.type!=='mouseout' ? this.getPointsAtEvent(evt):[]);
                         this.eachPoints(function(point){
-                            point.restore(['fillColor', 'strokeColor']);
+                            point.restore(['backgroundColor', 'borderColor']);
                         });
                         
                         Chart.helpers.each(activePoints, function(activePoint){
-                            activePoint.fillColor=activePoint.highlightFill;
-                            activePoint.strokeColor=activePoint.highlightStroke;
+                            activePoint.backgroundColor=activePoint.highlightFill;
+                            activePoint.borderColor=activePoint.highlightStroke;
                         });
                         
                         this.showTooltip(activePoints);
@@ -1260,13 +1491,13 @@
                 }
                 
                 //Iterate through each of the datasets, and build this into a property of the chart
-                Chart.helpers.each(data.datasets, function(dataset){
+                Chart.helpers.each(data.datasets, function(dataset) {
                     var datasetObject={
                         label: dataset.label || null,
-                        fillColor: dataset.fillColor,
-                        strokeColor: dataset.strokeColor,
-                        pointColor: dataset.pointColor,
-                        pointStrokeColor: dataset.pointStrokeColor,
+                        backgroundColor: dataset.backgroundColor,
+                        borderColor: dataset.borderColor,
+                        pointBackgroundColor: dataset.pointBackgroundColor,
+                        pointBorderColor: dataset.pointBorderColor,
                         points: []
                     };
                     
@@ -1279,10 +1510,10 @@
                             value: dataPoint,
                             label: data.labels[index],
                             datasetLabel: dataset.label,
-                            strokeColor: dataset.pointStrokeColor,
-                            fillColor: dataset.pointColor,
-                            highlightFill: dataset.pointHighlightFill || dataset.pointColor,
-                            highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor,
+                            borderColor: dataset.pointBorderColor,
+                            backgroundColor: dataset.pointBackgroundColor,
+                            highlightFill: dataset.pointHoverBackgroundColor || dataset.pointBackgroundColor,
+                            highlightStroke: dataset.pointHoverBorderColor || dataset.pointBorderColor,
                             rawData: dataset.rawData[index] || {}
                         }));
                     },this);
@@ -1314,8 +1545,8 @@
                         datasetLabel: this.datasets[datasetIndex].label,
                         x: this.scale.calculateX(this.scale.valuesCount+1),
                         y: this.scale.endPoint,
-                        strokeColor: this.datasets[datasetIndex].pointStrokeColor,
-                        fillColor: this.datasets[datasetIndex].pointColor,
+                        borderColor: this.datasets[datasetIndex].pointBorderColor,
+                        backgroundColor: this.datasets[datasetIndex].pointBackgroundColor,
                         rawData: valueObj.rawData
                     }));
                 },this);
@@ -1326,21 +1557,8 @@
             }
         });
         
-        Chart.defaults.NRLine.legendTemplate='<ul class="nr-report-graph-legend"><% for (var i=0; i<datasets.length; i++){%><li style="background-color:<%=datasets[i].strokeColor%>;color:<%=datasets[i].pointStrokeColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>';
         
-        
-        Chart.MultiTooltip = Chart.MultiTooltip.extend({
-            initialize: function() {
-                this.font = Chart.helpers.fontString(this.fontSize,this.fontStyle,this.fontFamily);
-
-                this.titleFont = Chart.helpers.fontString(this.titleFontSize,this.titleFontStyle,this.titleFontFamily);
-
-                this.titleHeight = 0;
-                this.width = 0;
-                this.height = 0;
-                
-                this.ctx.font = this.titleFont;
-            }
-        });
+        Chart.defaults.NRLine=Chart.defaults.line;
+        Chart.defaults.NRLine.legendTemplate='<ul class="nr-report-graph-legend"><% for (var i=0; i<datasets.length; i++){%><li style="background-color:<%=datasets[i].borderColor%>;color:<%=datasets[i].pointBorderColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>';*/
     }
 })(jQuery);
