@@ -367,6 +367,40 @@
         
         
         /**
+         * Legend Integration
+         */
+        $('.cms-content.NewRelicPerformanceReport .nr-report-graph .nr-report-graph-legend li').entwine({
+            onclick: function(e) {
+                var wrapper=this.closest('.nr-report-graph');
+                var chart=wrapper.getChart();
+                var datasetIndex=this.attr('data-chart-set-index');
+                if(chart && datasetIndex) {
+                    var metadata=chart.getDatasetMeta(datasetIndex);
+                    
+                    metadata.hidden=(metadata.hidden===null ? !chart.data.datasets[datasetIndex].hidden:null);
+                    
+                    //If hidden add the hidden class otherwise make sure it's removed
+                    if(metadata.hidden) {
+                        this
+                            .addClass('hidden')
+                            .css('color', this.attr('data-fill-color'))
+                            .css('border-color', this.attr('data-fill-color'));
+                    }else {
+                        this
+                            .removeClass('hidden')
+                            .css('color', this.attr('data-text-color'))
+                            .css('border-color', '');
+                    }
+                    
+                    chart.update();
+                }
+                
+                return false;
+            }
+        });
+        
+        
+        /**
          * Server Response Time Graph
          */
         $('.cms-content.NewRelicPerformanceReport .nr-report-graph.nr-server-response-time').entwine({
@@ -782,7 +816,7 @@
                         legendCallback: function() {
                             var html='<ul class="nr-report-graph-legend">';
                             for(var i=chartData.length-1;i>=0;i--) {
-                                html+='<li style="background-color:'+chartData[i].borderColor+';color:'+chartData[i].pointBorderColor+'">'+(chartData[i].label ? chartData[i].label:'')+'</li>';
+                                html+='<li style="background-color:'+chartData[i].borderColor+';color:'+chartData[i].pointBorderColor+'" data-chart-set-index="'+i+'" data-text-color="'+chartData[i].pointBorderColor+'" data-fill-color="'+chartData[i].borderColor+'">'+(chartData[i].label ? chartData[i].label:'')+'</li>';
                             }
                             
                             return html+'</ul>';
@@ -1113,7 +1147,7 @@
                         legendCallback: function() {
                             var html='<ul class="nr-report-graph-legend">';
                             for(var i=chartData.length-1;i>=0;i--) {
-                                html+='<li style="background-color:'+chartData[i].borderColor+';color:'+chartData[i].pointBorderColor+'">'+(chartData[i].label ? chartData[i].label:'')+'</li>';
+                                html+='<li style="background-color:'+chartData[i].borderColor+';border-color:'+chartData[i].borderColor+';color:'+chartData[i].pointBorderColor+'" data-chart-set-index="'+i+'" data-text-color="'+chartData[i].pointBorderColor+'" data-fill-color="'+chartData[i].borderColor+'">'+(chartData[i].label ? chartData[i].label:'')+'</li>';
                             }
                             
                             return html+'</ul>';
@@ -1466,111 +1500,5 @@
     function initChart() {
         //Set Chart Defaults
         Chart.defaults.global.responsive=true;
-        
-        /*Chart.controllers.NRLine=Chart.controllers.line.extend({
-            initialize: function(data){
-                //Declare the extension of the default point, to cater for the options passed in to the constructor
-                this.PointClass=Chart.Point.extend({
-                    offsetGridLines: this.options.offsetGridLines,
-                    strokeWidth: this.options.pointDotStrokeWidth,
-                    radius: this.options.pointDotRadius,
-                    display: this.options.pointDot,
-                    hitDetectionRadius: this.options.pointHitDetectionRadius,
-                    ctx: this.chart.ctx,
-                    inRange: function(mouseX){
-                        return (Math.pow(mouseX-this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius,2));
-                    },
-                    rawData: {}
-                });
-                
-                this.datasets=[];
-                
-                //Set up tooltip events on the chart
-                if(this.options.showTooltips){
-                    Chart.helpers.bindEvents(this, this.options.tooltipEvents, function(evt){
-                        var activePoints=(evt.type!=='mouseout' ? this.getPointsAtEvent(evt):[]);
-                        this.eachPoints(function(point){
-                            point.restore(['backgroundColor', 'borderColor']);
-                        });
-                        
-                        Chart.helpers.each(activePoints, function(activePoint){
-                            activePoint.backgroundColor=activePoint.highlightFill;
-                            activePoint.borderColor=activePoint.highlightStroke;
-                        });
-                        
-                        this.showTooltip(activePoints);
-                    });
-                }
-                
-                //Iterate through each of the datasets, and build this into a property of the chart
-                Chart.helpers.each(data.datasets, function(dataset) {
-                    var datasetObject={
-                        label: dataset.label || null,
-                        backgroundColor: dataset.backgroundColor,
-                        borderColor: dataset.borderColor,
-                        pointBackgroundColor: dataset.pointBackgroundColor,
-                        pointBorderColor: dataset.pointBorderColor,
-                        points: []
-                    };
-                    
-                    this.datasets.push(datasetObject);
-                    
-                    
-                    Chart.helpers.each(dataset.data, function(dataPoint, index) {
-                        //Add a new point for each piece of data, passing any required data to draw.
-                        datasetObject.points.push(new this.PointClass({
-                            value: dataPoint,
-                            label: data.labels[index],
-                            datasetLabel: dataset.label,
-                            borderColor: dataset.pointBorderColor,
-                            backgroundColor: dataset.pointBackgroundColor,
-                            highlightFill: dataset.pointHoverBackgroundColor || dataset.pointBackgroundColor,
-                            highlightStroke: dataset.pointHoverBorderColor || dataset.pointBorderColor,
-                            rawData: dataset.rawData[index] || {}
-                        }));
-                    },this);
-                    
-                    
-                    this.buildScale(data.labels);
-                    
-                    
-                    this.eachPoints(function(point, index){
-                        Chart.helpers.extend(point, {
-                            x: this.scale.calculateX(index),
-                            y: this.scale.endPoint
-                        });
-                        
-                        point.save();
-                    }, this);
-                },this);
-                
-                
-                this.render();
-            },
-            addData: function(valuesArray, label) {
-                //Map the values array for each of the datasets
-                helpers.each(valuesArray, function(valueObj, datasetIndex) {
-                    //Add a new point for each piece of data, passing any required data to draw.
-                    this.datasets[datasetIndex].points.push(new this.PointClass({
-                        value: valueObj.value,
-                        label: label,
-                        datasetLabel: this.datasets[datasetIndex].label,
-                        x: this.scale.calculateX(this.scale.valuesCount+1),
-                        y: this.scale.endPoint,
-                        borderColor: this.datasets[datasetIndex].pointBorderColor,
-                        backgroundColor: this.datasets[datasetIndex].pointBackgroundColor,
-                        rawData: valueObj.rawData
-                    }));
-                },this);
-
-                this.scale.addXLabel(label);
-                //Then re-render the chart.
-                this.update();
-            }
-        });
-        
-        
-        Chart.defaults.NRLine=Chart.defaults.line;
-        Chart.defaults.NRLine.legendTemplate='<ul class="nr-report-graph-legend"><% for (var i=0; i<datasets.length; i++){%><li style="background-color:<%=datasets[i].borderColor%>;color:<%=datasets[i].pointBorderColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>';*/
     }
 })(jQuery);

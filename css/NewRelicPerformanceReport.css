@@ -290,7 +290,15 @@
     font-size: 12px;
     font-weight: bold;
     
+    border: 1px solid transparent;
+    
     padding: 2px 5px;
+    
+    cursor: pointer;
+}
+
+.NewRelicPerformanceReport .nr-report-graph ul.nr-report-graph-legend li.hidden {
+    background-color: transparent !important;
 }
 
 .NewRelicPerformanceReport .nr-report-graph ul.nr-report-graph-legend li + li {
