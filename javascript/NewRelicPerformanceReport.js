@@ -249,7 +249,7 @@
              * @return {string}
              */
             tooltipTemplate: function(point, rawData) {
-                return point.label+': '+point.value;
+                return point.xLabel+':'+point.yLabel;
             },
             
             /**
