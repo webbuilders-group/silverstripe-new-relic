@@ -1,0 +1,11 @@
+---
+Name: new_relic
+After:
+    - "framework/*"
+---
+SilverStripe\Core\Injector\Injector:
+    Psr\SimpleCache\CacheInterface.NewRelic:
+        factory: SilverStripe\Core\Cache\CacheFactory
+        constructor:
+            namespace: "NewRelic"
+            defaultLifetime: 60

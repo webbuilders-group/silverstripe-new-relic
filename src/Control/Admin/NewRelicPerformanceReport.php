@@ -1,20 +1,23 @@
 <?php
 namespace WebbuildersGroup\NewRelic\Control\Admin;
 
+use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Convert;
+use SilverStripe\Core\Flushable;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\Requirements;
-use WebbuildersGroup\NewRelic\Api\NRRestfulService;
 use WebbuildersGroup\NewRelic\Reports\NRReportBase;
 
 
-class NewRelicPerformanceReport extends LeftAndMain {
+class NewRelicPerformanceReport extends LeftAndMain implements Flushable {
     private static $url_segment='site-performance';
     private static $menu_priority=-0.9;
     private static $menu_title='Site Performance';
+    private static $menu_icon='webbuilders-group/silverstripe-new-relic:images/new-relic.png';
     
     private static $allowed_actions=array(
                                         'overview_data'
@@ -65,11 +68,11 @@ class NewRelicPerformanceReport extends LeftAndMain {
     public function init() {
         parent::init();
 
-        Requirements::css(SS_NR_BASE.'/css/NewRelicPerformanceReport.css');
+        Requirements::css('webbuilders-group/silverstripe-new-relic:css/NewRelicPerformanceReport.css');
         
-        Requirements::add_i18n_javascript(SS_NR_BASE.'/javascript/lang');
-        Requirements::javascript(SS_NR_BASE.'/javascript/NewRelicPerformanceReport.js');
-        Requirements::javascript(SS_NR_BASE.'/thirdparty/nnnick/chart-js/chart.min.js');
+        Requirements::add_i18n_javascript('webbuilders-group/silverstripe-new-relic:javascript/lang');
+        Requirements::javascript('webbuilders-group/silverstripe-new-relic:javascript/NewRelicPerformanceReport.js');
+        Requirements::javascript('webbuilders-group/silverstripe-new-relic:thirdparty/nnnick/chart-js/chart.min.js');
     }
     
     /**
@@ -142,28 +145,38 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	    }
 	    
 	    
-	    //Build the base restful service object
-	    $service=new NRRestfulService('https://api.newrelic.com/v2/applications/'.Convert::raw2url($this->config()->application_id).'/metrics/data.json', $this->config()->refresh_rate);
-	    $service->httpHeader('X-Api-Key:'.Convert::raw2url($this->config()->api_key));
-	    $service->setQueryString(array(
-	                                   'names'=>array(
-        	                                           'HttpDispatcher',
-        	                                           'Apdex',
-        	                                           'EndUser/Apdex',
-        	                                           'Errors/all',
-        	                                           'EndUser'
-	                                               ),
-	                                   'period'=>60
-	                               ));
-	    
+        //Initite the cache and check if we have a value
+        $cacheKey=str_replace('\\', '', self::class);
+        $cache=Injector::inst()->get(CacheInterface::class.'.NewRelic');
+        /*if($cache->has($cacheKey)) {
+    	    $this->response->addHeader('Content-Type', 'application/json; charset=utf-8');
+            return $cache->get($cacheKey);
+        }*/
+        
+        
+        //Initiate the Guzzle Client
+        $service=new \GuzzleHttp\Client(array('headers'=>array('X-Api-Key'=>$this->config()->api_key)));
 	    
 	    //Perform the request
-	    $response=$service->request();
+	    $response=$service->request('GET', 'https://api.newrelic.com/v2/applications/'.Convert::raw2url($this->config()->application_id).'/metrics/data.json', array(
+                                                                                                                                                                    'query'=>array(
+                                                                                                                                                                                   'names'=>array(
+                                                                                                                                                                                                   'HttpDispatcher',
+                                                                                                                                                                                                   'Apdex',
+                                                                                                                                                                                                   'EndUser/Apdex',
+                                                                                                                                                                                                   'Errors/all',
+                                                                                                                                                                                                   'EndUser'
+                                                                                                                                                                                               ),
+                                                                                                                                                                                   'period'=>60
+                                                                                                                                                                                )));
 	    
 	    
 	    //Retrieve the body
-	    $body=$response->getBody();
+	    $body=$response->getBody()->getContents();
 	    if(!empty($body)) {
+            //Cache Response
+            $cache->set($cacheKey, $body, $this->config()->refresh_rate);
+            
     	    $this->response->addHeader('Content-Type', 'application/json; charset=utf-8');
     	    return $body;
 	    }
@@ -198,7 +211,7 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	 * @return ArrayList
 	 */
 	public function getReports() {
-	    $reportClasses=array_diff_key(ClassInfo::subclassesFor(NRReportBase::class), array_combine($this->config()->remove_reports, $this->config()->remove_reports));
+	    $reportClasses=array_diff(ClassInfo::subclassesFor(NRReportBase::class), array_combine($this->config()->remove_reports, $this->config()->remove_reports));
 	    foreach($reportClasses as $key=>$class) {
 	        $reportClasses[$key]=$class::create();
 	        $reportClasses[$key]->loadRequirements();
@@ -214,5 +227,12 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	public function getAgentVersion() {
 	    return phpversion('newrelic');
 	}
+    
+    /**
+     * Flushes the cached api response
+     */
+    public static function flush() {
+        Injector::inst()->get(CacheInterface::class . '.NewRelic')->clear();
+    }
 }
 ?>

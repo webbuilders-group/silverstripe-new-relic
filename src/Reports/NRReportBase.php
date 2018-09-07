@@ -18,7 +18,7 @@ abstract class NRReportBase extends ViewableData {
      * @return HTMLText
      */
     public function forTemplate() {
-        return $this->renderWith($this->class);
+        return $this->renderWith(get_class($this));
     }
     
     /**

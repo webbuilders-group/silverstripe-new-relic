@@ -1,14 +1,12 @@
 <?php
-
-use SilverStripe\Core\Config\Config;
-use WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport;
-use WebbuildersGroup\NewRelic\Extensions\NewRelicControllerHook;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+use WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport;
 use WebbuildersGroup\NewRelic\Dev\NewRelicErrorLogger;
-define('SS_NR_BASE', basename(dirname(__FILE__)));
+use WebbuildersGroup\NewRelic\Extensions\NewRelicControllerHook;
 
-Config::inst()->update(NewRelicPerformanceReport::class, 'menu_icon', SS_NR_BASE.'/images/new-relic.png');
+define('SS_NR_BASE', basename(dirname(__FILE__)));
 
 
 //Configure new relic monitoring
@@ -30,7 +28,7 @@ if(extension_loaded('newrelic')) {
     
     
     //New Relic error binders
-    if(Director::isLive()|| defined('SS_NR_FORCE_ENABLE_LOGGING')) {
+    if(Director::isLive() || defined('SS_NR_FORCE_ENABLE_LOGGING')) {
         SS_Log::add_writer(new NewRelicErrorLogger(), SS_Log::NOTICE);
         SS_Log::add_writer(new NewRelicErrorLogger(), SS_Log::WARN);
         SS_Log::add_writer(new NewRelicErrorLogger(), SS_Log::ERR);
