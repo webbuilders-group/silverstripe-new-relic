@@ -2,8 +2,6 @@
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
-use WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport;
-use WebbuildersGroup\NewRelic\Dev\NewRelicErrorLogger;
 use WebbuildersGroup\NewRelic\Extensions\NewRelicControllerHook;
 
 define('SS_NR_BASE', basename(dirname(__FILE__)));
@@ -25,14 +23,5 @@ if(extension_loaded('newrelic')) {
     if(Director::is_cli()) {
         newrelic_background_job(true);
     }
-    
-    
-    //New Relic error binders
-    if(Director::isLive() || defined('SS_NR_FORCE_ENABLE_LOGGING')) {
-        SS_Log::add_writer(new NewRelicErrorLogger(), SS_Log::NOTICE);
-        SS_Log::add_writer(new NewRelicErrorLogger(), SS_Log::WARN);
-        SS_Log::add_writer(new NewRelicErrorLogger(), SS_Log::ERR);
-    }
 }
-
 ?>

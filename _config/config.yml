@@ -8,4 +8,21 @@ SilverStripe\Core\Injector\Injector:
         factory: SilverStripe\Core\Cache\CacheFactory
         constructor:
             namespace: "NewRelic"
-            defaultLifetime: 60
+            defaultLifetime: 300
+    Psr\Log\LoggerInterface:
+        calls:
+            NewRelicHandlerNotice: [ pushHandler, [ %$NewRelicHandlerNotice ] ]
+            NewRelicHandlerWarn: [ pushHandler, [ %$NewRelicHandlerWarn ] ]
+            NewRelicHandlerError: [ pushHandler, [ %$NewRelicHandlerError ] ]
+    NewRelicHandlerNotice:
+        class: Monolog\Handler\NewRelicHandler
+        constructor:
+            - "notice"
+    NewRelicHandlerWarn:
+        class: Monolog\Handler\NewRelicHandler
+        constructor:
+            - "warning"
+    NewRelicHandlerError:
+        class: Monolog\Handler\NewRelicHandler
+        constructor:
+            - "error"

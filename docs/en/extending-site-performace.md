@@ -2,7 +2,7 @@ Extending the Site Performance Reports
 =================
 It's possible to extend the Site Performance section in the cms to display more information then what is provided by default. To do this you can simply create a subclass of ``NRReportBase`` this will get auto loaded into the report. This will require you define a ``loadRequirements`` method which can be used to add additional JavaScript and/or CSS requirements into the page load.
 
-In many cases you will need to add additional server side end points to be able to pull data from the [New Relic API](https://docs.newrelic.com/docs/apis/rest-api-v2). To do that simply add a normal SilverStripe extension to the ``NewRelicPerformanceReport`` class and follow the typical process for adding actions to a controller.
+In many cases you will need to add additional server side end points to be able to pull data from the [New Relic API](https://docs.newrelic.com/docs/apis/rest-api-v2). To do that simply add a normal SilverStripe extension to the ``WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport`` class and follow the typical process for adding actions to a controller.
 
 
 ## Custom Report Example
@@ -12,7 +12,9 @@ As an example we'll create a report that pulls in Alert incidents from the New R
 Our report class is mostly for providing a backend for loading a few CSS and JS dependencies and sorting it properly in the list. It also provides a configuration option that let's us filter the incidents based on policy id, used in the controller extension (to find the id of a policy use the [API Explorer](https://rpm.newrelic.com/api/explore/alerts_policies/list)). Note in the example report class below, it is expecting the report's scripts and styles to live in ``mysite`` so if you use this example make sure you adjust the paths to the files accordingly.
 
 ```php
-<?php
+use SilverStripe\View\Requirements;
+use WebbuildersGroup\NewRelic\Reports\NRReportBase;
+
 class NRAlertIncidentsReport extends NRReportBase {
     /**
      * Order the report should appear in the list, lower number is higher on the page
@@ -78,12 +80,12 @@ We'll also need a few additional styles to help with the appearance and user exp
 
 
 #### The Controller Extension
-Since we need to load more data from the New Relic API we need to extend the controller to add a few actions as well as some attributes to the Site Performance section's wrapper. She example's controller extension [can be found here](_files/NRPerformanceReportExtension.php). You'll notice in the example file that it uses the API key as configured on ``NewRelicPerformanceReport`` as well as the same cache refresh time which is also configured on the ``NewRelicPerformanceReport`` class. This is so that we're not duplicating where the api key exists and also using the same refresh timer as the page it self, though you do not have to do either.
+Since we need to load more data from the New Relic API we need to extend the controller to add a few actions as well as some attributes to the Site Performance section's wrapper. She example's controller extension [can be found here](_files/NRPerformanceReportExtension.php). You'll notice in the example file that it uses the API key as configured on ``WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport`` as well as the same cache refresh time which is also configured on the ``WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport`` class. This is so that we're not duplicating where the api key exists and also using the same refresh timer as the page it self, though you do not have to do either.
 
-After creating your extension for the ``NewRelicPerformanceReport`` controller you as normal will need to bind it to the controller. You can do this through your YAML config for the site.
+After creating your extension for the ``WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport`` controller you as normal will need to bind it to the controller. You can do this through your YAML config for the site.
 
 ```yml
-NewRelicPerformanceReport:
+WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport:
     extensions:
         - "NRPerformanceReportExtension"
 ```
