@@ -1,13 +1,20 @@
 <?php
+
+use SilverStripe\Core\Config\Config;
+use WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport;
+use WebbuildersGroup\NewRelic\Extensions\NewRelicControllerHook;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use WebbuildersGroup\NewRelic\Dev\NewRelicErrorLogger;
 define('SS_NR_BASE', basename(dirname(__FILE__)));
 
-Config::inst()->update('NewRelicPerformanceReport', 'menu_icon', SS_NR_BASE.'/images/new-relic.png');
+Config::inst()->update(NewRelicPerformanceReport::class, 'menu_icon', SS_NR_BASE.'/images/new-relic.png');
 
 
 //Configure new relic monitoring
 if(extension_loaded('newrelic')) {
     //Bind to the controller class
-    Controller::add_extension('NewRelicControllerHook');
+    Controller::add_extension(NewRelicControllerHook::class);
     
     
     //If we have an application name constant ensure New Relic knows what the name is

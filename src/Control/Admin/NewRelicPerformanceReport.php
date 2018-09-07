@@ -1,4 +1,16 @@
 <?php
+namespace WebbuildersGroup\NewRelic\Control\Admin;
+
+use SilverStripe\Admin\LeftAndMain;
+use SilverStripe\Control\HTTPResponse_Exception;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Convert;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\Requirements;
+use WebbuildersGroup\NewRelic\Api\NRRestfulService;
+use WebbuildersGroup\NewRelic\Reports\NRReportBase;
+
+
 class NewRelicPerformanceReport extends LeftAndMain {
     private static $url_segment='site-performance';
     private static $menu_priority=-0.9;
@@ -38,7 +50,7 @@ class NewRelicPerformanceReport extends LeftAndMain {
      * @config NewRelicPerformanceReport.remove_reports
      */
     private static $remove_reports=array(
-                                        'NRReportBase'
+                                        NRReportBase::class
                                     );
     
     
@@ -120,8 +132,8 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	    
 	    //If we're not configured properly return an error
 	    if(!$this->getIsConfigured()) {
-            $msg=_t('NewRelicPerformanceReport.API_APP_CONFIG_ERROR', '_New Relic API Key or Application ID is missing, check configuration');
-            $e=new SS_HTTPResponse_Exception($msg, 400);
+            $msg=_t('WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.API_APP_CONFIG_ERROR', '_New Relic API Key or Application ID is missing, check configuration');
+            $e=new HTTPResponse_Exception($msg, 400);
             $e->getResponse()->addHeader('Content-Type', 'text/plain');
             $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
 	        throw $e;
@@ -158,8 +170,8 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	    
 	    
 	    //Data failed to load
-	    $msg=_t('NewRelicPerformanceReport.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
-	    $e=new SS_HTTPResponse_Exception($msg, 400);
+	    $msg=_t('WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
+	    $e=new HTTPResponse_Exception($msg, 400);
 	    $e->getResponse()->addHeader('Content-Type', 'text/plain');
 	    $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
 	    throw $e;
@@ -186,7 +198,7 @@ class NewRelicPerformanceReport extends LeftAndMain {
 	 * @return ArrayList
 	 */
 	public function getReports() {
-	    $reportClasses=array_diff_key(ClassInfo::subclassesFor('NRReportBase'), array_combine($this->config()->remove_reports, $this->config()->remove_reports));
+	    $reportClasses=array_diff_key(ClassInfo::subclassesFor(NRReportBase::class), array_combine($this->config()->remove_reports, $this->config()->remove_reports));
 	    foreach($reportClasses as $key=>$class) {
 	        $reportClasses[$key]=$class::create();
 	        $reportClasses[$key]->loadRequirements();

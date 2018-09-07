@@ -1,7 +1,7 @@
 <div class="nr-report-graph nr-report-two-col nr-error-rate" data-warn-lvl="$ErrorRateWarnLvl.ATT" data-crit-lvl="$ErrorRateCritLvl.ATT">
     <div class="nr-report-header">
         <div class="nr-report-title">
-            <%t NewRelicPerformanceReport.ERROR_RATE "_Error Rate" %>
+            <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.ERROR_RATE "_Error Rate" %>
         </div>
         
         <div class="nr-report-averages">

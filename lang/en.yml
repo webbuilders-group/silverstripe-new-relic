@@ -1,5 +1,5 @@
 en:
-    NewRelicPerformanceReport:
+    WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport:
         MENUTITLE: "Site Performance"
         API_APP_CONFIG_ERROR: "New Relic API Key or Application ID is missing, check configuration"
         DATA_LOAD_FAIL: "Failed to retrieve data from New Relic"

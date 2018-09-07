@@ -1,4 +1,10 @@
 <?php
+namespace WebbuildersGroup\NewRelic\Api;
+
+use SilverStripe\Control\Controller;
+use RestfulService;
+
+
 class NRRestfulService extends RestfulService {
     /**
      * Returns a full request url

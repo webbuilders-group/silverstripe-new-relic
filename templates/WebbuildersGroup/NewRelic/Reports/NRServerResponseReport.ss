@@ -1,12 +1,12 @@
 <div class="nr-report-graph nr-report-two-col nr-server-response-time">
     <div class="nr-report-header">
         <div class="nr-report-title">
-            <%t NewRelicPerformanceReport.SERVER_RESPONSE_TIME "_Server Response Time" %>
+            <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.SERVER_RESPONSE_TIME "_Server Response Time" %>
         </div>
         
         <div class="nr-report-averages">
             <ul>
-                <li class="nr-server"><span class="nr-value">N/A</span><span class="nr-label"><%t NewRelicPerformanceReport.AVERAGE "_Average" %></span></li>
+                <li class="nr-server"><span class="nr-value">N/A</span><span class="nr-label"><%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.AVERAGE "_Average" %></span></li>
             </ul>
         </div>
     </div>

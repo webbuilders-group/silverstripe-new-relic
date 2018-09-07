@@ -1,4 +1,11 @@
 <?php
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse_Exception;
+use SilverStripe\Core\Convert;
+use SilverStripe\Core\Extension;
+use SilverStripe\View\Requirements;
+
+
 class NRPerformanceReportExtension extends Extension {
     private static $allowed_actions=array(
                                         'alerts_incidents',
@@ -26,8 +33,8 @@ class NRPerformanceReportExtension extends Extension {
 
         //If we're not configured properly return an error
         if(!$this->owner->getIsConfigured()) {
-            $msg=_t('NewRelicPerformanceReport.API_APP_CONFIG_ERROR', '_New Relic API Key or Application ID is missing, check configuration');
-            $e=new SS_HTTPResponse_Exception($msg, 400);
+            $msg=_t('WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.API_APP_CONFIG_ERROR', '_New Relic API Key or Application ID is missing, check configuration');
+            $e=new HTTPResponse_Exception($msg, 400);
             $e->getResponse()->addHeader('Content-Type', 'text/plain');
             $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
             throw $e;
@@ -72,8 +79,8 @@ class NRPerformanceReportExtension extends Extension {
 
 
         //Data failed to load
-        $msg=_t('NewRelicPerformanceReport.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
-        $e=new SS_HTTPResponse_Exception($msg, 400);
+        $msg=_t('WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
+        $e=new HTTPResponse_Exception($msg, 400);
         $e->getResponse()->addHeader('Content-Type', 'text/plain');
         $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
         throw $e;
@@ -83,15 +90,15 @@ class NRPerformanceReportExtension extends Extension {
      * Retrieves the violations for the given time range and violation ids
      * @return
      */
-    public function alerts_violations(SS_HTTPRequest $request) {
+    public function alerts_violations(HTTPRequest $request) {
         //Purge Requirements
         Requirements::clear();
 
 
         //If we're not configured properly return an error
         if(!$this->owner->getIsConfigured()) {
-            $msg=_t('NewRelicPerformanceReport.API_APP_CONFIG_ERROR', '_New Relic API Key or Application ID is missing, check configuration');
-            $e=new SS_HTTPResponse_Exception($msg, 400);
+            $msg=_t('WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.API_APP_CONFIG_ERROR', '_New Relic API Key or Application ID is missing, check configuration');
+            $e=new HTTPResponse_Exception($msg, 400);
             $e->getResponse()->addHeader('Content-Type', 'text/plain');
             $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
             throw $e;
@@ -104,7 +111,7 @@ class NRPerformanceReportExtension extends Extension {
         $endTime=$request->getVar('end_time');
         $violations=explode(',', $request->getVar('violations'));
         if(empty($startTime) || empty($violations) || count($violations)==0) {
-            $e=new SS_HTTPResponse_Exception('Missing a start time or violation ids', 400);
+            $e=new HTTPResponse_Exception('Missing a start time or violation ids', 400);
             $e->getResponse()->addHeader('Content-Type', 'text/plain');
             $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
             throw $e;
@@ -159,8 +166,8 @@ class NRPerformanceReportExtension extends Extension {
 
 
         //Data failed to load
-        $msg=_t('NewRelicPerformanceReport.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
-        $e=new SS_HTTPResponse_Exception($msg, 400);
+        $msg=_t('WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
+        $e=new HTTPResponse_Exception($msg, 400);
         $e->getResponse()->addHeader('Content-Type', 'text/plain');
         $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
         throw $e;

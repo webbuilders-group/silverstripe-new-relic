@@ -1,4 +1,7 @@
 <?php
+namespace WebbuildersGroup\NewRelic\Reports;
+
+
 class NRVisitorLoadTimeReport extends NRReportBase {
     private static $sort_order=2;
     

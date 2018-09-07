@@ -1,4 +1,10 @@
 <?php
+namespace WebbuildersGroup\NewRelic\Extensions;
+
+use SilverStripe\CMS\Controllers\ContentController;
+use SilverStripe\Core\Extension;
+
+
 class NewRelicControllerHook extends Extension {
     /**
      * Set the transaction name to be the controller plus either init-only or index depending on what happened, if this is a page controller set the page link
@@ -14,7 +20,7 @@ class NewRelicControllerHook extends Extension {
         
         
         //Append the page link
-        if($this->owner instanceof Page_Controller) {
+        if(class_exists(ContentController::class) && $this->owner instanceof ContentController) {
             newrelic_add_custom_parameter('ssPageLink', $this->owner->Link());
         }
         

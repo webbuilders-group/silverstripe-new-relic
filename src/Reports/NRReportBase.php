@@ -1,4 +1,9 @@
 <?php
+namespace WebbuildersGroup\NewRelic\Reports;
+
+use SilverStripe\View\ViewableData;
+
+
 abstract class NRReportBase extends ViewableData {
     /**
      * Order the report should appear in the list, lower number is higher on the page

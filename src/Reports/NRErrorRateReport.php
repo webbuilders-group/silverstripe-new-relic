@@ -1,4 +1,7 @@
 <?php
+namespace WebbuildersGroup\NewRelic\Reports;
+
+
 class NRErrorRateReport extends NRReportBase {
     private static $sort_order=5;
     

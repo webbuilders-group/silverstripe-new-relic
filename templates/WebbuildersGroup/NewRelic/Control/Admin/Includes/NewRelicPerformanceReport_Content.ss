@@ -7,7 +7,7 @@
     
     <div class="cms-content-fields center cms-panel-padded nr-report-wrapper" data-report-data-feed="$Link('overview-data')" data-report-refresh-rate="$RefreshRate"$AttributesHTML>
         <% if not $IsConfigured %>
-            <div class="message error"><%t NewRelicPerformanceReport.API_APP_CONFIG_ERROR "_New Relic API Key or Application ID is missing, check configuration" %></div>
+            <div class="message error"><%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.API_APP_CONFIG_ERROR "_New Relic API Key or Application ID is missing, check configuration" %></div>
         <% end_if %>
         
         <% loop $Reports %>
@@ -15,14 +15,14 @@
         <% end_loop %>
         
         <p class="nr-data-provider">
-            <%t NewRelicPerformanceReport.DATA_PROVIDED_BY "_Data provided by:" %> <a href="http://newrelic.com" target="_blank"><img src="$NRBase/images/new-relic-full.png" alt="New Relic"/></a>
+            <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.DATA_PROVIDED_BY "_Data provided by:" %> <a href="http://newrelic.com" target="_blank"><img src="$NRBase/images/new-relic-full.png" alt="New Relic"/></a>
             <br />
             
             <span>
                 <% if $AgentVersion %>
-                    <%t NewRelicPerformanceReport.AGENT_VERSION "_Agent Version: {version}" version=$AgentVersion %>
+                    <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.AGENT_VERSION "_Agent Version: {version}" version=$AgentVersion %>
                 <% else %>
-                    <%t NewRelicPerformanceReport.AGENT_NOT_INSTALLED "_Agent Not Installed" %>
+                    <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.AGENT_NOT_INSTALLED "_Agent Not Installed" %>
                 <% end_if %>
             </span>
         </p>

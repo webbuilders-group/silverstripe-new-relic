@@ -1,13 +1,13 @@
 <div class="nr-report-graph nr-report-legend-graph nr-report-two-col nr-throughput">
     <div class="nr-report-header">
         <div class="nr-report-title">
-            <%t NewRelicPerformanceReport.THROUGHPUT "_Throughput" %>
+            <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.THROUGHPUT "_Throughput" %>
         </div>
         
         <div class="nr-report-averages">
             <ul>
-                <li class="nr-server"><span class="nr-value"><%t NewRelicPerformanceReport.NO_RPM "_0.00rpm" %></span><span class="nr-label"><%t NewRelicPerformanceReport.SERVER "_Server" %></span></li>
-                <li class="nr-browser"><span class="nr-value"><%t NewRelicPerformanceReport.NO_RPM "_0.00rpm" %></span><span class="nr-label"><%t NewRelicPerformanceReport.VISITOR "_Visitor" %></span></li>
+                <li class="nr-server"><span class="nr-value"><%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.NO_RPM "_0.00rpm" %></span><span class="nr-label"><%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.SERVER "_Server" %></span></li>
+                <li class="nr-browser"><span class="nr-value"><%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.NO_RPM "_0.00rpm" %></span><span class="nr-label"><%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.VISITOR "_Visitor" %></span></li>
             </ul>
         </div>
     </div>
