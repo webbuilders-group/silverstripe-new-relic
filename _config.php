@@ -9,6 +9,8 @@ define('SS_NR_BASE', basename(dirname(__FILE__)));
 
 //Configure new relic monitoring
 if(extension_loaded('newrelic')) {
+    define('SS_NR_AGENT_INSTALLED', true);
+    
     //Bind to the controller class
     Controller::add_extension(NewRelicControllerHook::class);
     
