@@ -9,6 +9,8 @@ use SilverStripe\Core\Convert;
 use SilverStripe\Core\Flushable;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\FieldType\DBInt;
+use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\View\Requirements;
 use WebbuildersGroup\NewRelic\Reports\NRReportBase;
 
@@ -58,8 +60,8 @@ class NewRelicPerformanceReport extends LeftAndMain implements Flushable {
     
     
     private static $casting=array(
-                                'getRefreshRate'=>'Int',
-                                'getAttributesHTML'=>'HTMLVarchar'
+                                'RefreshRate'=>DBInt::class,
+                                'AttributesHTML'=>DBHTMLVarchar::class
                             );
     
     private $extraAttributes=array();
@@ -72,7 +74,7 @@ class NewRelicPerformanceReport extends LeftAndMain implements Flushable {
         
         Requirements::add_i18n_javascript('webbuilders-group/silverstripe-new-relic:javascript/lang');
         Requirements::javascript('webbuilders-group/silverstripe-new-relic:javascript/NewRelicPerformanceReport.js');
-        Requirements::javascript('webbuilders-group/silverstripe-new-relic:thirdparty/nnnick/chart-js/chart.min.js');
+        Requirements::javascript('webbuilders-group/silverstripe-new-relic:thirdparty/chartjs/chart-js/chart.min.js');
     }
     
     /**
@@ -146,12 +148,12 @@ class NewRelicPerformanceReport extends LeftAndMain implements Flushable {
 	    
 	    
         //Initite the cache and check if we have a value
-        $cacheKey=str_replace('\\', '', self::class);
+        $cacheKey=hash('sha256', self::class);
         $cache=Injector::inst()->get(CacheInterface::class.'.NewRelic');
-        /*if($cache->has($cacheKey)) {
+        if($cache->has($cacheKey)) {
     	    $this->response->addHeader('Content-Type', 'application/json; charset=utf-8');
             return $cache->get($cacheKey);
-        }*/
+        }
         
         
         //Initiate the Guzzle Client

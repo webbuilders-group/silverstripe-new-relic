@@ -2,24 +2,35 @@
     padding: 16px;
 }
 
+.NewRelicPerformanceReport .nr-report-wrapper {
+    display: flex;
+    
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    
+    align-items: stretch;
+    justify-content: space-between;
+}
+
 .NewRelicPerformanceReport .nr-report-graph {
-    background: #B0BEC7;
-    background-image: linear-gradient(#B0BEC7, #92A5B2);
+    background: #D8E4EB;
     
-    color: #1F1F1F;
+    display: flex;
     
-    
-    clear: both;
+    color: #43536D;
     
     position: relative;
     
     width: 100%;
     
+    flex-direction: column;
+    
+    align-items: stretch;
+    
     margin-bottom: 20px;
     padding: 10px;
     
-    border-top: 1px solid #C2CDD4;
-    border-bottom: 1px solid #748D9D;
+    border-bottom: 1px solid #C2CDD4;
     
     box-sizing: border-box;
     
@@ -27,25 +38,13 @@
 }
 
 .NewRelicPerformanceReport .nr-report-graph.nr-report-two-col {
-    clear: none;
-    
-    float: left;
-    
     width: 49.5%;
-}
-
-.NewRelicPerformanceReport .nr-report-graph.nr-report-two-col + .nr-report-two-col {
-    margin-left: 1%;
-}
-
-.NewRelicPerformanceReport .nr-report-graph.nr-report-two-col:nth-child(2n) + .nr-report-two-col {
-    clear: both;
-    
-    margin-left: 0;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-header {
     position: relative;
+    
+    flex: 0 0 auto;
     
     margin-bottom: 5px;
 }
@@ -74,8 +73,6 @@
     font-weight: bold;
     
     line-height: normal;
-    
-    text-shadow: #BFCAD2 1px 1px 0;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-title .nr-report-alert-icon {
@@ -109,6 +106,8 @@
     
     float: left;
     
+    color: #43536D;
+    
     margin-left: 20px;
     
     text-align: center;
@@ -119,14 +118,12 @@
 .NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul li span {
     display: block;
     
-    text-shadow: #BFCAD2 1px 1px 0;
+    color: #43536D;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul li .nr-value {
     font-size: 16px;
     font-weight: bold;
-    
-    margin-bottom: 4px;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-averages ul li .nr-label {
@@ -139,6 +136,8 @@
     position: relative;
     
     width: 100%;
+    
+    flex: 1 1 auto;
     
     padding-bottom: 52.4%;
 }
@@ -153,7 +152,7 @@
     width: 100%;
     height: 100%;
     
-    border: 1px solid #748D9D;
+    border: 1px solid #CED5E1;
     
     padding: 9px;
     
@@ -364,41 +363,28 @@
 .NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table td {
     color: #666666;
     
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid #DBE0E9;
+    border-bottom: 1px solid #DBE0E9;
     
     padding: 5px 10px;
 }
 
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table td:first-child {
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table th:last-child,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table td:last-child {
+    border-right: 0;
 }
 
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap > table.nr-report-table {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tr:last-child td {
+    border-bottom: 0;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table thead th {
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b0bec7), color-stop(100%, #98aab6));
-    background-image: -moz-linear-gradient(#b0bec7, #98aab6);
-    background-image: -webkit-linear-gradient(#b0bec7, #98aab6);
-    background-image: linear-gradient(#b0bec7, #98aab6);
-    
     font-weight: bold;
-    color: #FFFFFF;
+    color: #43536D;
 }
 
 .NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap > table.nr-report-table > thead > tr > th {
     line-height: 22px;
-}
-
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table thead tr th:first-child {
-    border-top-left-radius: 5px;
-}
-
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table thead tr th:last-child {
-    border-top-right-radius: 5px;
 }
 
 .NewRelicPerformanceReport .nr-data-provider {
