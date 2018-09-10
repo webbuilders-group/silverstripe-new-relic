@@ -12,6 +12,7 @@ As an example we'll create a report that pulls in Alert incidents from the New R
 Our report class is mostly for providing a backend for loading a few CSS and JS dependencies and sorting it properly in the list. It also provides a configuration option that let's us filter the incidents based on policy id, used in the controller extension (to find the id of a policy use the [API Explorer](https://rpm.newrelic.com/api/explore/alerts_policies/list)). Note in the example report class below, it is expecting the report's scripts and styles to live in ``mysite`` so if you use this example make sure you adjust the paths to the files accordingly.
 
 ```php
+<?php
 use SilverStripe\View\Requirements;
 use WebbuildersGroup\NewRelic\Reports\NRReportBase;
 

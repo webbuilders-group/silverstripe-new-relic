@@ -16,6 +16,11 @@
     background: #F0F4F7;
 }
 
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.incident-row.open + tr.incident-detail-row,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-row.open + tr.violation-detail-row {
+    display: table-row;
+}
+
 .NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.incident-row:hover > td,
 .NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row:hover > td {
     background: #FFFAD6;
@@ -45,16 +50,154 @@
     border-bottom-color: transparent;
 }
 
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.Warning .type-flag {
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.Warning .type-flag,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.Warning .closed-in-progress {
     color: #FBB85D;
 }
 
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.Critical .type-flag {
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.Critical .type-flag,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-row.Critical .closed-in-progress {
     color: #D75968;
 }
 
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-detail-row table.nr-report-table,
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-detail-row table.nr-report-table td,
-.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap table.nr-report-table tbody tr.violation-detail-row table.nr-report-table th {
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-detail-row table.nr-report-table,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-detail-row table.nr-report-table td,
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-detail-row table.nr-report-table th {
     border: 0;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-detail-row table.nr-report-table tfoot tr.alerts-graph-row a.view-graph {
+    display: inline-block;
+
+    line-height: 16px;
+}
+
+.NewRelicPerformanceReport .nr-report-graph .nr-report-table-wrap tr.violation-detail-row table.nr-report-table tfoot tr.alerts-graph-row a.view-graph:before {
+    background: url(./../images/nr-graph-icon.png) no-repeat left center;
+
+    display: inline-block;
+
+    content: "";
+
+    width: 16px;
+    height: 16px;
+
+    margin-right: 0.5em;
+
+    vertical-align: middle;
+}
+
+#nr-alerts-metric-dialog {
+    max-height: 500px;
+
+    padding-top: 1.5em;
+
+    overflow: hidden;
+}
+
+#nr-alerts-metric-dialog .canvas-wrap {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+}
+
+#nr-alerts-metric-dialog canvas {
+    width: 900px;
+    height: 800px;
+
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#nr-alerts-metric-dialog .nr-graph-tooltip {
+    background: rgba(0, 0, 0, 0.8);
+
+    display: none;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    color: #FFFFFF;
+
+    padding: 5px;
+
+    border-radius: 4px;
+
+    white-space: nowrap;
+
+    z-index: 200;
+
+    pointer-events: none;
+}
+
+#nr-alerts-metric-dialog .nr-graph-tooltip:before {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+
+
+    content: " ";
+
+    width: 0;
+    height: 0;
+
+    border: 8px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
+
+    margin-left: -8px;
+
+    pointer-events: none;
+}
+
+#nr-alerts-metric-dialog .nr-graph-tooltip.arrow-top:before {
+    top: auto;
+    bottom: 100%;
+
+    border-top-color: transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.8);
+}
+
+#nr-alerts-metric-dialog .nr-graph-tooltip.arrow-left:before {
+    top: 50%;
+    left: auto;
+    right: 100%;
+
+    margin: -8px 0 0;
+
+    border-top-color: transparent;
+    border-right-color: rgba(0, 0, 0, 0.8);
+}
+
+#nr-alerts-metric-dialog .nr-graph-tooltip.arrow-right:before {
+    top: 50%;
+    left: 100%;
+
+    margin: -8px 0 0;
+
+    border-top-color: transparent;
+    border-left-color: rgba(0, 0, 0, 0.8);
+}
+
+#nr-alerts-metric-dialog .nr-graph-tooltip .time-span {
+    display: block;
+
+    font-weight: bold;
+    font-size: 1.1em;
+
+    margin-bottom: 10px;
+}
+
+#nr-alerts-metric-dialog .nr-graph-tooltip b {
+    font-weight: bold;
+}
+
+#nr-alerts-metric-dialog .nr-graph-tooltip hr {
+    border: 0;
+
+    border-bottom: 1px solid #FFFFFF;
+
+    margin: 5px 0;
+    padding: 0;
 }
