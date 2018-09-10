@@ -9,6 +9,15 @@ SilverStripe\Core\Injector\Injector:
         constructor:
             namespace: "NewRelic"
             defaultLifetime: 300
+
+
+---
+Name: new_relic_error
+After: "#new_relic"
+Only:
+    environment: "live"
+---
+SilverStripe\Core\Injector\Injector:
     Psr\Log\LoggerInterface:
         calls:
             NewRelicHandlerNotice: [ pushHandler, [ %$NewRelicHandlerNotice ] ]
