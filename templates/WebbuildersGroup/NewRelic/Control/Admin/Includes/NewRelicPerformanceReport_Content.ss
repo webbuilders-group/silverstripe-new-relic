@@ -20,7 +20,7 @@
             </div>
             
             <p class="nr-data-provider">
-                <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.DATA_PROVIDED_BY "_Data provided by:" %> <a href="https://www.newrelic.com/" target="_blank"><img src="resources/new-relic/images/new-relic-full.png" alt="New Relic"/></a>
+                <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.DATA_PROVIDED_BY "_Data provided by:" %> <a href="https://www.newrelic.com/" target="_blank"><img src="resources/vendor/webbuilders-group/silverstripe-new-relic/images/new-relic-full.png" alt="New Relic"/></a>
                 <br />
                 
                 <span>
