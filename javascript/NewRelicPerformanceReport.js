@@ -331,7 +331,7 @@
                 
                 
                 //Display the loading spinner
-                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').show();
+                self.addClass('loading');
             }
         });
         
@@ -520,7 +520,7 @@
                 
                 
                 //Hide the loading
-                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                self.removeClass('loading');
             },
             
             /**
@@ -676,7 +676,7 @@
                 
                 
                 //Hide the loading
-                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                self.removeClass('loading');
             },
             
             /**
@@ -887,7 +887,7 @@
                 
                 
                 //Hide the loading
-                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                self.removeClass('loading');
             },
             
             /**
@@ -1218,7 +1218,7 @@
                 
                 
                 //Hide the loading
-                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                self.removeClass('loading');
             },
             
             /**
@@ -1459,7 +1459,7 @@
                 
                 
                 //Hide the loading
-                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                self.removeClass('loading');
             },
             
             /**

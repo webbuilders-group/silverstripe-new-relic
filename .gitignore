@@ -1,3 +1,5 @@
 /.settings/
 /.buildpath
 /.project
+/javascript/ReportLoader.js.map
+/node_modules

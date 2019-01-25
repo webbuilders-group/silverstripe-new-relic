@@ -45,7 +45,7 @@ class NRAlertIncidentsReport extends NRReportBase {
 All report templates must be named the same as their class (so for this example ``NRAlertIncidentsReport.ss``), and they must be created there is no base template. Note the ``nr-report-two-col`` class in the template's wrapping element, this class will make the report appear as a half width report if you remove this class it will be full width. If you do remove that class you may need to play with a fixed height in order to improve the experience.
 
 ```html
-<div class="nr-report-graph nr-report-two-col nr-alerts-incidents">
+<div class="nr-report-graph nr-report-two-col nr-alerts-incidents loading">
     <div class="nr-report-header">
         <div class="nr-report-title">Alert Incidents</div>
     </div>
@@ -66,9 +66,6 @@ All report templates must be named the same as their class (so for this example 
                     <tbody><!-- --></tbody>
                 </table>
             </div>
-
-            <div class="cms-content-loading-overlay ui-widget-overlay-light"></div>
-            <div class="cms-content-loading-spinner"></div>
         </div>
     </div>
 </div>

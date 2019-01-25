@@ -159,7 +159,7 @@
 
 
                 //Hide the loading
-                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                self.removeClass('loading');
             },
 
             /**
@@ -182,7 +182,7 @@
 
 
                 //Display the loading spinner
-                self.find('.cms-content-loading-overlay, .cms-content-loading-spinner').show();
+                self.addClass('loading');
             },
 
             /**
@@ -258,7 +258,7 @@
 
 
                 //Display the loading spinner
-                container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').show();
+                container.addClass('loading');
 
                 $.ajax({
                     url: this.closest('.nr-report-wrapper').attr('data-alerts-violations-feed'),
@@ -276,7 +276,7 @@
 
                             alert('Error Retrieving Incident Details, try again later');
 
-                            container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                            container.removeClass('loading');
 
                             return;
                         }
@@ -287,7 +287,7 @@
 
                             alert('Could not find details on the Incident');
 
-                            container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                            container.removeClass('loading');
 
                             return;
                         }
@@ -381,7 +381,7 @@
 
 
                         //Hide the loading spinner
-                        container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                        container.removeClass('loading');
 
 
                         //Reset the Refresh Timer
@@ -393,7 +393,7 @@
                         }
 
                         //Hide the loading spinner
-                        container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                        container.removeClass('loading');
 
                         //Reset the Refresh Timer
                         reportWrapper.resetRefreshTimer();
@@ -432,7 +432,7 @@
 
 
                 //Display the loading spinner
-                container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').show();
+                container.addClass('loading');
 
                 var chart;
                 var isNRQL=(self.attr('data-condition-product') && self.attr('data-condition-product').toLowerCase()=='nrql');
@@ -447,7 +447,7 @@
                         success: function(response) {
                             if(response.error) {
                                 //Hide the loading spinner
-                                container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                                container.removeClass('loading');
 
                                 //Reset the Refresh Timer
                                 reportWrapper.resetRefreshTimer();
@@ -509,7 +509,7 @@
                                         }
 
                                         //Hide the loading spinner
-                                        container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                                        container.removeClass('loading');
 
                                         //Reset the Refresh Timer
                                         reportWrapper.resetRefreshTimer();
@@ -627,7 +627,7 @@
 
 
                             //Hide the loading spinner
-                            container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                            container.removeClass('loading');
 
 
                             //Reset the Refresh Timer
@@ -639,7 +639,7 @@
                             }
 
                             //Hide the loading spinner
-                            container.find('.cms-content-loading-overlay, .cms-content-loading-spinner').hide();
+                            container.removeClass('loading');
 
                             //Reset the Refresh Timer
                             reportWrapper.resetRefreshTimer();

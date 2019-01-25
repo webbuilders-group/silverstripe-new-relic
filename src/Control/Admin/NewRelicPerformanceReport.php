@@ -74,6 +74,7 @@ class NewRelicPerformanceReport extends LeftAndMain implements Flushable {
         
         Requirements::add_i18n_javascript('webbuilders-group/silverstripe-new-relic:javascript/lang');
         Requirements::javascript('webbuilders-group/silverstripe-new-relic:javascript/NewRelicPerformanceReport.js');
+        Requirements::javascript('webbuilders-group/silverstripe-new-relic:javascript/ReportLoader.js');
         Requirements::javascript('webbuilders-group/silverstripe-new-relic:thirdparty/chartjs/chart-js/chart.min.js');
     }
     

@@ -1,4 +1,4 @@
-<div class="nr-report-graph nr-report-two-col nr-error-rate" data-warn-lvl="$ErrorRateWarnLvl.ATT" data-crit-lvl="$ErrorRateCritLvl.ATT">
+<div class="nr-report-graph nr-report-two-col nr-error-rate loading" data-warn-lvl="$ErrorRateWarnLvl.ATT" data-crit-lvl="$ErrorRateCritLvl.ATT">
     <div class="nr-report-header">
         <div class="nr-report-title">
             <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.ERROR_RATE "_Error Rate" %>
@@ -18,9 +18,6 @@
                 
                 <div class="nr-graph-tooltip"></div>
             </div>
-            
-            <div class="cms-content-loading-overlay ui-widget-overlay-light"></div>
-            <div class="cms-content-loading-spinner"></div>
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<div class="nr-report-graph nr-report-legend-graph nr-report-two-col nr-apdex" data-warn-lvl="$ApdexWarnLvl.ATT" data-crit-lvl="$ApdexCritLvl.ATT" data-browser-warn-lvl="$ApdexWarnLvl.ATT" data-browser-crit-lvl="$ApdexCritLvl.ATT">
+<div class="nr-report-graph nr-report-legend-graph nr-report-two-col nr-apdex loading" data-warn-lvl="$ApdexWarnLvl.ATT" data-crit-lvl="$ApdexCritLvl.ATT" data-browser-warn-lvl="$ApdexWarnLvl.ATT" data-browser-crit-lvl="$ApdexCritLvl.ATT">
     <div class="nr-report-header">
         <div class="nr-report-title">
             <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.APDEX_SCORE "_Apdex Score" %> <a href="https://docs.newrelic.com/docs/general/apdex" class="nr-report-help" target="_blank"></a>
@@ -21,9 +21,6 @@
                 
                 <div class="nr-graph-tooltip"></div>
             </div>
-            
-            <div class="cms-content-loading-overlay ui-widget-overlay-light"></div>
-            <div class="cms-content-loading-spinner"></div>
         </div>
     </div>
 </div>

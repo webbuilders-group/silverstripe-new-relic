@@ -1,4 +1,4 @@
-<div class="nr-report-graph nr-report-two-col nr-server-response-time">
+<div class="nr-report-graph nr-report-two-col nr-server-response-time loading">
     <div class="nr-report-header">
         <div class="nr-report-title">
             <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.SERVER_RESPONSE_TIME "_Server Response Time" %>
@@ -18,9 +18,6 @@
                 
                 <div class="nr-graph-tooltip"></div>
             </div>
-            
-            <div class="cms-content-loading-overlay ui-widget-overlay-light"></div>
-            <div class="cms-content-loading-spinner"></div>
         </div>
     </div>
 </div>
