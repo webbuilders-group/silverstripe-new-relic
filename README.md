@@ -18,12 +18,6 @@ composer require webbuilders-group/silverstripe-new-relic
 ```
 
 
-If you prefer you may also install manually:
-* Download the module from here https://github.com/webbuilders-group/silverstripe-new-relic/archive/master.zip
-* Extract the downloaded archive into your site root so that the destination folder is called new-relic, opening the extracted folder should contain _config.php in the root along with other files/folders
-* Run dev/build?flush=all to regenerate the manifest
-
-
 ## Configuration
 The configuration for the module can be found [here](docs/en/configuration.md) though most of the module will work out of the box provided the [New Relic PHP Agent](https://docs.newrelic.com/docs/agents/php-agent/getting-started/new-relic-php) and extension is loaded. In order to get the CMS "Site Performance" section working you must configure the ``WebbuildersGroup\NewRelic\Core\Admin\NewRelicPerformanceReport.application_id`` and ``WebbuildersGroup\NewRelic\Core\Admin\NewRelicPerformanceReport.api_key`` options.
 

@@ -29,6 +29,10 @@
                     <% else %>
                         <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.AGENT_NOT_INSTALLED "_Agent Not Installed" %>
                     <% end_if %>
+                    |
+                    <% if $AppName %>
+                        <%t WebbuildersGroup\\NewRelic\\Control\\Admin\\NewRelicPerformanceReport.APP_NAME "_Application Name: {name}" name=$AppName %>
+                    <% end_if %>
                 </span>
             </p>
         </div>

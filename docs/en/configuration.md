@@ -3,8 +3,8 @@ Configuration
 Most of the configuration for the module is automatic if you have [New Relic's PHP Agent](https://docs.newrelic.com/docs/agents/php-agent/getting-started/new-relic-php) installed on your server and the extension is loaded. However there are a few configuration options:
 
 
-#### PHP Constants
-* __SS_NR_APPLICATION_NAME:__ This constant represents the application name to feed data into New Relic and can be set in either your project's ``_config.php`` or in ``_ss_environment.php``. You probably also want to ensure this is set in web server's configuration layer just in case there are critical issues with SilverStripe and the module does not have or is unable to set the application name. See the [New Relic PHP Agent documentation](https://docs.newrelic.com/docs/agents/php-agent/configuration/php-directory-ini-settings) for more information on how to do this.
+#### Environment Variables
+* __SS_NR_APPLICATION_NAME:__ This environment variable represents the application name to feed data into New Relic and can be set in your site's ``.env`` file. You probably also want to ensure this is set in web server's configuration layer just in case there are critical issues with SilverStripe and the module does not have or is unable to set the application name. See the [New Relic PHP Agent documentation](https://docs.newrelic.com/docs/agents/php-agent/configuration/php-directory-ini-settings) for more information on how to do this.
 
 
 #### SilverStripe Configuration Layer

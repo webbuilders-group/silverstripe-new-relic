@@ -16,3 +16,5 @@ en:
         DATA_PROVIDED_BY: "Data provided by:"
         AGENT_VERSION: "Agent Version: {version}"
         AGENT_NOT_INSTALLED: "Agent Not Installed"
+        APP_NAME: "Application Name: {name}"
+        SILVERSTRIPE_APPLICATION: "SilverStripe Application"

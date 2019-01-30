@@ -6,6 +6,7 @@ use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Convert;
+use SilverStripe\Core\Environment;
 use SilverStripe\Core\Flushable;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\ArrayList;
@@ -221,6 +222,20 @@ class NewRelicPerformanceReport extends LeftAndMain implements Flushable {
 	 */
 	public function getAgentVersion() {
 	    return phpversion('newrelic');
+	}
+	
+	/**
+	 * Gets the name of the application
+	 * @return string|null
+	 */
+	public function getAppName() {
+	    if(Environment::getEnv('SS_NR_APPLICATION_NAME')) {
+            return Environment::getEnv('SS_NR_APPLICATION_NAME');
+        }else if(defined('SS_NR_APPLICATION_NAME')) {
+            return SS_NR_APPLICATION_NAME;
+        }
+        
+        return _t(NewRelicPerformanceReport::class.'.SILVERSTRIPE_APPLICATION', '_SilverStripe Application');
 	}
     
     /**

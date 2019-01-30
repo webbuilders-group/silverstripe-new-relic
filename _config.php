@@ -1,7 +1,9 @@
 <?php
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Environment;
 use SilverStripe\Core\Config\Config;
+use WebbuildersGroup\NewRelic\Control\Admin\NewRelicPerformanceReport;
 use WebbuildersGroup\NewRelic\Extensions\NewRelicControllerHook;
 
 
@@ -13,9 +15,13 @@ if(extension_loaded('newrelic')) {
     Controller::add_extension(NewRelicControllerHook::class);
     
     
-    //If we have an application name constant ensure New Relic knows what the name is
-    if(defined('SS_NR_APPLICATION_NAME')) {
+    //If we have an application name constant or environment variable ensure New Relic knows what the name is
+    if(Environment::getEnv('SS_NR_APPLICATION_NAME')) {
+        newrelic_set_appname(Environment::getEnv('SS_NR_APPLICATION_NAME'));
+    }else if(defined('SS_NR_APPLICATION_NAME')) {
         newrelic_set_appname(SS_NR_APPLICATION_NAME);
+    }else {
+        newrelic_set_appname(_t(NewRelicPerformanceReport::class.'.SILVERSTRIPE_APPLICATION', '_SilverStripe Application'));
     }
     
     
