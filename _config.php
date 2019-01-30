@@ -4,8 +4,6 @@ use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use WebbuildersGroup\NewRelic\Extensions\NewRelicControllerHook;
 
-define('SS_NR_BASE', basename(dirname(__FILE__)));
-
 
 //Configure new relic monitoring
 if(extension_loaded('newrelic')) {

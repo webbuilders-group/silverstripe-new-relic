@@ -202,14 +202,6 @@ class NewRelicPerformanceReport extends LeftAndMain implements Flushable {
 	}
 	
 	/**
-	 * Gets the base folder for the new relic module
-	 * @return string
-	 */
-	public function getNRBase() {
-	    return SS_NR_BASE;
-	}
-	
-	/**
 	 * Get the reports available in the performance report
 	 * @return ArrayList
 	 */
