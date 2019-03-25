@@ -1,6 +1,7 @@
 <?php
 namespace WebbuildersGroup\NewRelic\Extensions;
 
+use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Core\Extension;
 
@@ -23,6 +24,10 @@ class NewRelicControllerHook extends Extension {
         if(class_exists(ContentController::class) && $this->owner instanceof ContentController) {
             newrelic_add_custom_parameter('ssPageLink', $this->owner->Link());
         }
+        
+        
+        //Append the SilverStripe Version
+        newrelic_add_custom_parameter('silverstripe_version', LeftAndMain::create()->CMSVersionNumber());
         
         
         //Append the host name for the server
