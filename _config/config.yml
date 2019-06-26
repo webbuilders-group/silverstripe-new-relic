@@ -20,9 +20,9 @@ Only:
 SilverStripe\Core\Injector\Injector:
     Psr\Log\LoggerInterface:
         calls:
-            NewRelicHandlerNotice: [ pushHandler, [ %$NewRelicHandlerNotice ] ]
-            NewRelicHandlerWarn: [ pushHandler, [ %$NewRelicHandlerWarn ] ]
-            NewRelicHandlerError: [ pushHandler, [ %$NewRelicHandlerError ] ]
+            NewRelicHandlerNotice: [ pushHandler, [ '%$NewRelicHandlerNotice' ] ]
+            NewRelicHandlerWarn: [ pushHandler, [ '%$NewRelicHandlerWarn' ] ]
+            NewRelicHandlerError: [ pushHandler, [ '%$NewRelicHandlerError' ] ]
     NewRelicHandlerNotice:
         class: Monolog\Handler\NewRelicHandler
         constructor:
