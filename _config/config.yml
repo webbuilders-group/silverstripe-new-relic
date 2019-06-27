@@ -15,7 +15,7 @@ SilverStripe\Core\Injector\Injector:
 Name: new_relic_error
 After: "#new_relic"
 Only:
-    constantdefined: "SS_NR_AGENT_INSTALLED"
+    classexists: 'WebbuildersGroup\NewRelic\NewRelic'
 ---
 SilverStripe\Core\Injector\Injector:
     Psr\Log\LoggerInterface:
