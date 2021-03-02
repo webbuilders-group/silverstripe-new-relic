@@ -26,7 +26,7 @@ The configuration for the module can be found [here](docs/en/configuration.md) t
 This module provices a high level overview for the CMS user of some of the less technical analytics that New Relic collects. Graphs displayed are the server response time, visitor load time, throughput (server and visitor), Apdex Score (server and visitor) and the server error rate. The interface uses visitor over browser for defining the client site performance to simplify it for CMS users. The data displayed is over a period of the last 30 minutes. The data refreshes every 5 minutes by default, see the [configuration documentation](docs/en/configuration.md) for more information. If you want to disable this section simply add the following to your _config.php.
 
 ```php
-CMSMenu::remove_menu_item('WebbuildersGroup\\NewRelic\\Core\\Admin\\NewRelicPerformanceReport');
+CMSMenu::remove_menu_item('WebbuildersGroup-NewRelic-Core-Admin-NewRelicPerformanceReport');
 ```
 
 ![admin ui](docs/en/_images/screenshot.png)
