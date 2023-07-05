@@ -1,6 +1,7 @@
 <?php
 namespace WebbuildersGroup\NewRelic\Control\Admin;
 
+use GuzzleHttp\Exception\ClientException;
 use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Control\HTTPResponse_Exception;
@@ -165,42 +166,54 @@ class NewRelicPerformanceReport extends LeftAndMain implements Flushable
         $service = new \GuzzleHttp\Client(['headers' => ['X-Api-Key' => Injector::inst()->convertServiceProperty($this->config()->api_key)]]);
 
         // Perform the request
-        $response = $service->request(
-            'GET',
-            'https://api.newrelic.com/v2/applications/' . Convert::raw2url($this->config()->application_id) . '/metrics/data.json',
-            [
-                'query' => [
-                    'names' => [
-                        'HttpDispatcher',
-                        'Apdex',
-                        'EndUser/Apdex',
-                        'Errors/all',
-                        'EndUser',
+        try {
+            $response = $service->request(
+                'GET',
+                'https://api.newrelic.com/v2/applications/' . Convert::raw2url($this->config()->application_id) . '/metrics/data.json',
+                [
+                    'query' => [
+                        'names' => implode(
+                            ',',
+                            [
+                                'HttpDispatcher',
+                                'Apdex',
+                                'EndUser/Apdex',
+                                'Errors/all',
+                                'EndUser',
+                            ]
+                        ),
+                        'period' => 60,
                     ],
-                    'period' => 60,
-                ],
-            ]
-        );
+                ]
+            );
 
 
-        // Retrieve the body
-        $body = $response->getBody()->getContents();
-        if (!empty($body)) {
-            // Cache Response
-            $cache->set($cacheKey, $body, $this->config()->refresh_rate);
+            // Retrieve the body
+            $body = $response->getBody()->getContents();
+            if (!empty($body)) {
+                // Cache Response
+                $cache->set($cacheKey, $body, $this->config()->refresh_rate);
 
-            $this->response->addHeader('Content-Type', 'application/json; charset=utf-8');
-            return $body;
+                $this->response->addHeader('Content-Type', 'application/json; charset=utf-8');
+                return $body;
+            }
+
+            // Data failed to load
+            $msg = _t(__CLASS__ . '.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
+            $e = new HTTPResponse_Exception($msg, 400);
+            $e->getResponse()->addHeader('Content-Type', 'text/plain');
+            $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
+
+            throw $e;
+        } catch (ClientException $e) {
+            // Data failed to load
+            $msg = _t(__CLASS__ . '.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
+            $e = new HTTPResponse_Exception($msg, 400);
+            $e->getResponse()->addHeader('Content-Type', 'text/plain');
+            $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
+
+            throw $e;
         }
-
-
-        // Data failed to load
-        $msg = _t(__CLASS__ . '.DATA_LOAD_FAIL', '_Failed to retrieve data from New Relic');
-        $e = new HTTPResponse_Exception($msg, 400);
-        $e->getResponse()->addHeader('Content-Type', 'text/plain');
-        $e->getResponse()->addHeader('X-Status', rawurlencode($msg));
-
-        throw $e;
     }
 
     /**
