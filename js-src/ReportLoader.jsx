@@ -20,7 +20,7 @@ import Loading from 'components/Loading/Loading';
             onunmatch: function() {
                 this._super();
                 
-                const container=this.find('.cms-loading-container');
+                const container = this.find('.cms-loading-container');
                 if (container && container.length) {
                     ReactDOM.unmountComponentAtNode(container[0]);
                     container.remove();

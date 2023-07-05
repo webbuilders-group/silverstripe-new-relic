@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.2.0](https://github.com/webbuilders-group/silverstripe-new-relic/tree/2.1.3) (2023-07-05)
+[Full Changelog](https://github.com/webbuilders-group/silverstripe-new-relic/compare/2.1.2...2.2.0)
+
 ## [2.1.2](https://github.com/webbuilders-group/silverstripe-new-relic/tree/2.1.2) (2019-06-27)
 [Full Changelog](https://github.com/webbuilders-group/silverstripe-new-relic/compare/2.1.1...2.1.2)
 

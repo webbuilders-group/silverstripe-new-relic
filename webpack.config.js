@@ -24,9 +24,9 @@ const config = [
                     loader: 'babel-loader',
                     options: {
                         presets: [
-                                    ['env', { modules: false }],
-                                    'react',
-                                ],
+                            ['@babel/env', { modules: false }],
+                            '@babel/react',
+                        ],
                         comments: false
                     }
                 }
