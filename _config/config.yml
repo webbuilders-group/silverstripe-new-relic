@@ -1,37 +1,37 @@
 ---
 Name: new_relic
 After:
-    - "framework/*"
+  - "silverstripe/framework/*"
 ---
 SilverStripe\Core\Injector\Injector:
-    Psr\SimpleCache\CacheInterface.NewRelic:
-        factory: SilverStripe\Core\Cache\CacheFactory
-        constructor:
-            namespace: "NewRelic"
-            defaultLifetime: 300
+  Psr\SimpleCache\CacheInterface.NewRelic:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "NewRelic"
+      defaultLifetime: 300
 
 
 ---
 Name: new_relic_error
 After: "#new_relic"
 Only:
-    classexists: 'WebbuildersGroup\NewRelic\NewRelic'
+  classexists: 'WebbuildersGroup\NewRelic\NewRelic'
 ---
 SilverStripe\Core\Injector\Injector:
-    Psr\Log\LoggerInterface:
-        calls:
-            NewRelicHandlerNotice: [ pushHandler, [ '%$NewRelicHandlerNotice' ] ]
-            NewRelicHandlerWarn: [ pushHandler, [ '%$NewRelicHandlerWarn' ] ]
-            NewRelicHandlerError: [ pushHandler, [ '%$NewRelicHandlerError' ] ]
-    NewRelicHandlerNotice:
-        class: Monolog\Handler\NewRelicHandler
-        constructor:
-            - "notice"
-    NewRelicHandlerWarn:
-        class: Monolog\Handler\NewRelicHandler
-        constructor:
-            - "warning"
-    NewRelicHandlerError:
-        class: Monolog\Handler\NewRelicHandler
-        constructor:
-            - "error"
+  Psr\Log\LoggerInterface:
+    calls:
+      NewRelicHandlerNotice: [ pushHandler, [ '%$NewRelicHandlerNotice' ] ]
+      NewRelicHandlerWarn: [ pushHandler, [ '%$NewRelicHandlerWarn' ] ]
+      NewRelicHandlerError: [ pushHandler, [ '%$NewRelicHandlerError' ] ]
+  NewRelicHandlerNotice:
+    class: Monolog\Handler\NewRelicHandler
+    constructor:
+      - "notice"
+  NewRelicHandlerWarn:
+    class: Monolog\Handler\NewRelicHandler
+    constructor:
+      - "warning"
+  NewRelicHandlerError:
+    class: Monolog\Handler\NewRelicHandler
+    constructor:
+      - "error"
