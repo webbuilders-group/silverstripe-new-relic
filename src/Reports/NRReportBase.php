@@ -1,9 +1,9 @@
 <?php
 namespace WebbuildersGroup\NewRelic\Reports;
 
-use SilverStripe\View\ViewableData;
+use SilverStripe\Model\ModelData;
 
-abstract class NRReportBase extends ViewableData
+abstract class NRReportBase extends ModelData
 {
     /**
      * Order the report should appear in the list, lower number is higher on the page
@@ -17,7 +17,7 @@ abstract class NRReportBase extends ViewableData
      * Handles rendering into the template
      * @return HTMLText
      */
-    public function forTemplate()
+    public function forTemplate(): string
     {
         return $this->renderWith(get_class($this));
     }

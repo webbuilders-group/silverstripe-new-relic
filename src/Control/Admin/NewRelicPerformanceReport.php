@@ -10,7 +10,7 @@ use SilverStripe\Core\Convert;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Flushable;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\View\Requirements;
 use WebbuildersGroup\NewRelic\Reports\NRReportBase;
 
